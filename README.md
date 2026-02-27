@@ -1,106 +1,175 @@
-# real-time-chat-app
-Real-Time Chat System with Async Processing
+Real-Time Communication Platform
+Chat • Voice Notes • Voice Calls • Video Calls • Async Processing
 
-A scalable real-time chat application built with event-driven architecture and background job processing.
+A scalable real-time communication system built with WebSockets, WebRTC, and asynchronous background processing.
 
-This project demonstrates how to combine WebSockets for real-time communication with asynchronous background workers for handling heavy or non-blocking tasks.
+This project demonstrates how to design and implement a production-style real-time system capable of handling messaging, voice communication, and video streaming without blocking core operations.
 
-**🚀 Project Overview**
+🧠 Project Overview
 
-This system allows users to:
+This application allows users to:
 
-Join chat rooms
+Send and receive real-time text messages
 
-Send and receive messages instantly
+Record and send voice notes
 
-See users typing in real time
+Make one-to-one voice calls
 
-Receive delivery/read confirmations
+Start real-time video calls
 
-Experience non-blocking message processing
+See user presence (online/offline)
 
-Behind the scenes, the system processes certain tasks asynchronously to ensure fast user interaction and scalability.
+Experience instant updates across devices
 
-**🧠 Architecture Overview**
+The system uses asynchronous processing to handle heavy tasks in the background while keeping communication fast and responsive.
 
-The system is divided into three main layers:
+⚡ Core Features
+💬 Real-Time Messaging
 
-**1️⃣ Client (Frontend)**
+Instant message delivery using WebSockets
+
+Typing indicators
+
+Message status (sent, delivered, read)
+
+Persistent chat history
+
+🎙 Voice Notes
+
+Record audio directly from browser
+
+Upload audio file to server
+
+Background processing for:
+
+File storage
+
+Compression
+
+Transcoding
+
+Async notification when processing is complete
+
+📞 Voice Calls
+
+Peer-to-peer voice communication using WebRTC
+
+Real-time signaling via WebSocket
+
+Call accept/reject handling
+
+Call status updates
+
+🎥 Video Calls
+
+Live camera streaming using WebRTC
+
+ICE candidate exchange via signaling server
+
+Secure peer connection
+
+Real-time connection monitoring
+
+🏗 Architecture Overview
+
+The system follows an event-driven, non-blocking architecture.
+
+1️⃣ Frontend
 
 React
 
-WebSocket connection (Socket.io client)
+Socket.io-client
 
-Real-time UI updates
+WebRTC APIs (MediaDevices, RTCPeerConnection)
 
-**2️⃣ Server (Backend API + WebSocket Server)**
+2️⃣ Backend
 
-Node.js + Express
+Node.js
 
-Socket.io for real-time communication
+Express
 
-REST API for user/session management
+Socket.io (signaling server)
 
-**3️⃣ Async Processing Layer**
+REST API
 
-Message queue (Redis / Bull / RabbitMQ)
+3️⃣ Async Processing Layer
 
-Worker process for background tasks
+Redis
 
-**How It Works**
-Real-Time Flow
+Bull queue (or RabbitMQ)
 
-User sends a message
+Worker processes
+
+🔄 How It Works
+Real-Time Messaging Flow
+
+User sends message
 
 Server receives message via WebSocket
 
-Message is saved to database
+Message saved to database
 
-Server broadcasts message instantly to other users in the room
+Server instantly broadcasts message to recipient
 
-This ensures immediate communication with minimal delay.
+Background jobs triggered for:
 
-Asynchronous Processing Flow
-
-After a message is saved, the system pushes background tasks to a queue:
-
-Message analytics processing
+Analytics
 
 Spam detection
 
-Sentiment analysis
+Push notifications
 
-Push notification delivery
+Voice Note Processing Flow
 
-Message indexing for search
+User records voice note
 
-A separate worker process handles these tasks without blocking the main server.
+Audio uploaded to server
 
-This keeps the chat fast even under heavy load.
+Server immediately acknowledges upload
 
-**🏗 System Design**
+Audio sent to message queue
 
-User → WebSocket → Server → Database
-             ↓
-           Message Queue → Worker → Background Tasks
+Worker:
 
-This separation ensures:
+Compresses file
 
-Non-blocking operations
+Converts format
 
-Horizontal scalability
+Stores in cloud storage
 
-Better performance under load
+System notifies recipient when ready
 
-Fault tolerance
+This prevents blocking the main server thread.
 
-**🛠 Tech Stack**
+Video / Voice Call Flow (WebRTC)
+
+User initiates call
+
+Signaling server exchanges:
+
+SDP offers
+
+Answers
+
+ICE candidates
+
+Peer-to-peer connection established
+
+Media streams directly between users
+
+Server only handles signaling (not media stream)
+
+This design reduces server load and improves scalability.
+
+🛠 Tech Stack
 
 Frontend:
 
 React
 
 Socket.io-client
+
+WebRTC APIs
 
 Backend:
 
@@ -114,32 +183,54 @@ Database:
 
 MongoDB / PostgreSQL
 
-Async Processing:
+Async Layer:
 
 Redis
 
-Bull queue (or RabbitMQ)
+Bull queue or RabbitMQ
 
-**Key Features**
+Worker services
 
-Real-time message delivery
+Optional:
 
-Typing indicators
+Cloud storage (AWS S3 / Cloudinary)
 
-Online/offline presence
+STUN/TURN servers for WebRTC
 
-Background message processing
+📈 Scalability Considerations
 
-Event-driven architecture
+WebSocket clustering with Redis adapter
 
-Scalable design
+Horizontal scaling of worker processes
 
-Clean separation of concerns
-**📦 Installation**
-**1. Clone the repository**
-https://github.com/Simon-li09/real-time-chat-app.git
-cd realtime-chat-system
-**2. Install dependencies**
+Decoupled signaling and processing layers
+
+Stateless backend services
+
+Media streaming peer-to-peer to reduce server bandwidth
+
+🔐 Security Considerations
+
+JWT-based authentication
+
+Secure WebSocket connections (WSS)
+
+Encrypted WebRTC connections (DTLS/SRTP)
+
+Rate limiting
+
+Input validation
+
+Secure media storage
+
+📦 Installation
+
+Clone repository:
+
+git clone https://github.com/your-username/realtime-communication-platform.git
+cd realtime-communication-platform
+
+Install dependencies:
 
 Backend:
 
@@ -150,68 +241,52 @@ Frontend:
 
 cd client
 npm install
-**3. Start Redis**
 
-Make sure Redis is running locally:
+Start Redis:
 
 redis-server
-**4. Run the application**
 
-Backend:
+Run backend:
 
 npm run dev
 
-Worker:
+Run worker:
 
 npm run worker
 
-Frontend:
+Run frontend:
 
 npm start
-**📊 Scalability Considerations**
+🧪 Future Improvements
 
-WebSocket clustering with Redis adapter
+Group video calls
 
-Horizontal scaling of worker processes
+Screen sharing
 
-Load balancing
-
-Stateless server design
-
-Decoupled background processing
-
-This system can scale from small deployments to high-traffic real-time platforms.
-
-**🧪 Future Improvements**
+Call recording
 
 End-to-end encryption
 
-Message persistence optimization
+Message search indexing
 
-Media upload handling
-
-Read receipts
-
-Chat search engine
+Push notifications
 
 Kubernetes deployment
 
-Monitoring and logging with Prometheus
+Observability (logs + metrics)
 
-**📌 Why This Project Matters**
+🎯 What This Project Demonstrates
 
-This project demonstrates understanding of:
+Real-time system design
 
-Real-time systems
+Asynchronous job processing
 
-Asynchronous processing
+WebRTC implementation
 
 Event-driven architecture
 
-Message queues
+Scalable backend design
 
-System scalability
+Non-blocking server operations
 
-Non-blocking backend design
-
-It reflects production-level system thinking beyond basic CRUD applications.
+Production-level thinking beyond CRUD apps
