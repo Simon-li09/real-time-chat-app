@@ -1,13 +1,13 @@
-🚀 Real-Time Communication System
-Chat • Voice Notes • Voice Calls • Video Calls • Async Processing
+**🚀 Real-Time Communication System
+Chat • Voice Notes • Voice Calls • Video Calls • Async Processing**
 
 A scalable real-time communication platform built using WebSockets and asynchronous background processing.
 
 This system handles messaging, voice notes, voice calls, and video calls in real time while offloading heavy tasks to background workers to maintain performance and responsiveness.
 
-🧠 Project Overview
+**🧠 Project Overview**
 
-This application allows users to:
+**This application allows users to:**
 
 Send and receive real-time messages
 
@@ -23,8 +23,8 @@ Receive instant updates across sessions
 
 All communication is handled through persistent WebSocket connections, ensuring low-latency, event-driven interactions.
 
-⚡ Core Features
-💬 Real-Time Messaging
+**⚡ Core Features
+💬 Real-Time Messaging**
 
 Instant message delivery using WebSockets
 
@@ -34,13 +34,13 @@ Message delivery status
 
 Persistent chat history
 
-🎙 Voice Notes
+**🎙 Voice Notes**
 
 Browser-based voice recording
 
 Audio upload via WebSocket
 
-Background processing for:
+**Background processing for:**
 
 Compression
 
@@ -52,7 +52,7 @@ Async completion notification
 
 Voice note processing runs in the background so the main server stays responsive.
 
-📞 Voice Calls (WebSocket-Based Streaming)
+**📞 Voice Calls (WebSocket-Based Streaming)**
 
 Real-time voice data streamed via WebSocket
 
@@ -62,7 +62,7 @@ Live call state updates
 
 Server-managed session control
 
-🎥 Video Calls (WebSocket-Based Streaming)
+**🎥 Video Calls (WebSocket-Based Streaming)**
 
 Real-time video frame streaming via WebSocket
 
@@ -74,11 +74,11 @@ Connection monitoring
 
 All media streams pass through the WebSocket server, allowing centralized control and monitoring.
 
-🏗 Architecture Overview
+**🏗 Architecture Overview**
 
 This system follows an event-driven architecture with async background processing.
 
-1️⃣ Frontend
+**1️⃣ Frontend**
 
 React
 
@@ -86,7 +86,7 @@ Socket.io-client
 
 MediaRecorder API
 
-2️⃣ Backend
+**2️⃣ Backend**
 
 Node.js
 
@@ -94,7 +94,7 @@ Express
 
 Socket.io (WebSocket server)
 
-3️⃣ Async Processing Layer
+**3️⃣ Async Processing Layer**
 
 Redis
 
@@ -102,7 +102,7 @@ Bull Queue
 
 Worker processes
 
-4️⃣ Infrastructure
+**4️⃣ Infrastructure**
 
 Hosted on DigitalOcean Droplets
 
@@ -112,7 +112,7 @@ Nginx as reverse proxy
 
 PM2 for process management
 
-🔄 System Flow
+**🔄 System Flow**
 Real-Time Communication Flow
 
 Client establishes WebSocket connection
@@ -127,7 +127,7 @@ Background jobs triggered if needed
 
 Async Processing Flow
 
-For tasks like:
+**For tasks like:**
 
 Voice note compression
 
@@ -137,7 +137,7 @@ Analytics processing
 
 Activity logging
 
-Flow:
+**Flow:**
 
 Event triggers job creation
 
@@ -151,15 +151,15 @@ System emits update via WebSocket
 
 This keeps the main thread non-blocking and scalable.
 
-🛠 Tech Stack
+**🛠 Tech Stack**
 
-Frontend:
+**Frontend:**
 
 React
 
 Socket.io-client
 
-Backend:
+**Backend:**
 
 Node.js
 
@@ -167,11 +167,11 @@ Express
 
 Socket.io
 
-Database:
+**Database:**
 
 MongoDB / PostgreSQL
 
-Async Layer:
+**Async Layer:**
 
 Redis
 
@@ -179,7 +179,7 @@ Bull Queue
 
 Worker services
 
-Infrastructure:
+**Infrastructure:**
 
 DigitalOcean Droplets
 
@@ -187,7 +187,7 @@ Nginx
 
 PM2
 
-📈 Scalability Strategy
+**📈 Scalability Strategy**
 
 Horizontal scaling of WebSocket servers
 
@@ -199,7 +199,7 @@ Stateless API design
 
 Load-balanced DigitalOcean droplets
 
-🔐 Security
+**🔐 Security**
 
 JWT authentication
 
@@ -213,39 +213,39 @@ Secure media storage
 
 Server-side call session management
 
-📦 Installation
+**📦 Installation**
 
-Clone repository:
+**Clone repository:**
 
-git clone https://github.com/your-username/realtime-communication-system.git
+git clone https://github.com/Simon-li09/real-time-chat-app.git
 cd realtime-communication-system
 
-Install backend:
+**Install backend:**
 
 cd server
 npm install
 
-Install frontend:
+**Install frontend:**
 
 cd client
 npm install
 
-Start Redis:
+**Start Redis:**
 
 redis-server
 
-Run backend:
+**Run backend:**
 
 npm run dev
 
-Run worker:
+**Run worker:**
 
 npm run worker
 
-Run frontend:
+**Run frontend:**
 
 npm start
-🚀 Deployment (DigitalOcean)
+**🚀 Deployment (DigitalOcean)**
 
 Create Droplet
 
@@ -261,7 +261,7 @@ Enable HTTPS
 
 Configure firewall rules
 
-🎯 What This Project Demonstrates
+**🎯 What This Project Demonstrates**
 
 Real-time WebSocket architecture
 
