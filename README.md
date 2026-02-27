@@ -1,13 +1,13 @@
-Real-Time Communication Platform
-Chat • Voice Notes • Voice Calls • Video Calls • Async Processing
+**Real-Time Communication Platform
+Chat • Voice Notes • Voice Calls • Video Calls • Async Processing**
 
 A scalable real-time communication system built with WebSockets, WebRTC, and asynchronous background processing.
 
 This project demonstrates how to design and implement a production-style real-time system capable of handling messaging, voice communication, and video streaming without blocking core operations.
 
-🧠 Project Overview
+**🧠 Project Overview**
 
-This application allows users to:
+**This application allows users to:**
 
 Send and receive real-time text messages
 
@@ -23,8 +23,8 @@ Experience instant updates across devices
 
 The system uses asynchronous processing to handle heavy tasks in the background while keeping communication fast and responsive.
 
-⚡ Core Features
-💬 Real-Time Messaging
+**⚡ Core Features
+💬 Real-Time Messaging**
 
 Instant message delivery using WebSockets
 
@@ -34,13 +34,13 @@ Message status (sent, delivered, read)
 
 Persistent chat history
 
-🎙 Voice Notes
+**🎙 Voice Notes**
 
 Record audio directly from browser
 
 Upload audio file to server
 
-Background processing for:
+**Background processing for:**
 
 File storage
 
@@ -50,7 +50,7 @@ Transcoding
 
 Async notification when processing is complete
 
-📞 Voice Calls
+**📞 Voice Calls**
 
 Peer-to-peer voice communication using WebRTC
 
@@ -60,7 +60,7 @@ Call accept/reject handling
 
 Call status updates
 
-🎥 Video Calls
+**🎥 Video Calls**
 
 Live camera streaming using WebRTC
 
@@ -70,11 +70,11 @@ Secure peer connection
 
 Real-time connection monitoring
 
-🏗 Architecture Overview
+**🏗 Architecture Overview**
 
 The system follows an event-driven, non-blocking architecture.
 
-1️⃣ Frontend
+**1️⃣ Frontend**
 
 React
 
@@ -82,7 +82,7 @@ Socket.io-client
 
 WebRTC APIs (MediaDevices, RTCPeerConnection)
 
-2️⃣ Backend
+**2️⃣ Backend**
 
 Node.js
 
@@ -92,7 +92,7 @@ Socket.io (signaling server)
 
 REST API
 
-3️⃣ Async Processing Layer
+**3️⃣ Async Processing Layer**
 
 Redis
 
@@ -100,7 +100,7 @@ Bull queue (or RabbitMQ)
 
 Worker processes
 
-🔄 How It Works
+**🔄 How It Works**
 Real-Time Messaging Flow
 
 User sends message
@@ -111,7 +111,7 @@ Message saved to database
 
 Server instantly broadcasts message to recipient
 
-Background jobs triggered for:
+**Background jobs triggered for:**
 
 Analytics
 
@@ -129,7 +129,7 @@ Server immediately acknowledges upload
 
 Audio sent to message queue
 
-Worker:
+**Worker:**
 
 Compresses file
 
@@ -145,7 +145,7 @@ Video / Voice Call Flow (WebRTC)
 
 User initiates call
 
-Signaling server exchanges:
+**Signaling server exchanges:**
 
 SDP offers
 
@@ -161,9 +161,9 @@ Server only handles signaling (not media stream)
 
 This design reduces server load and improves scalability.
 
-🛠 Tech Stack
+**🛠 Tech Stack**
 
-Frontend:
+**Frontend:**
 
 React
 
@@ -171,7 +171,7 @@ Socket.io-client
 
 WebRTC APIs
 
-Backend:
+**Backend:**
 
 Node.js
 
@@ -179,11 +179,11 @@ Express
 
 Socket.io
 
-Database:
+**Database:**
 
 MongoDB / PostgreSQL
 
-Async Layer:
+**Async Layer:**
 
 Redis
 
@@ -191,13 +191,13 @@ Bull queue or RabbitMQ
 
 Worker services
 
-Optional:
+**Optional:**
 
 Cloud storage (AWS S3 / Cloudinary)
 
 STUN/TURN servers for WebRTC
 
-📈 Scalability Considerations
+**📈 Scalability Considerations**
 
 WebSocket clustering with Redis adapter
 
@@ -209,7 +209,7 @@ Stateless backend services
 
 Media streaming peer-to-peer to reduce server bandwidth
 
-🔐 Security Considerations
+**🔐 Security Considerations**
 
 JWT-based authentication
 
@@ -223,41 +223,41 @@ Input validation
 
 Secure media storage
 
-📦 Installation
+**📦 Installation**
 
-Clone repository:
+**Clone repository:**
 
 git clone https://github.com/your-username/realtime-communication-platform.git
 cd realtime-communication-platform
 
-Install dependencies:
+**Install dependencies:**
 
-Backend:
+**Backend:**
 
 cd server
 npm install
 
-Frontend:
+**Frontend:**
 
 cd client
 npm install
 
-Start Redis:
+**Start Redis:**
 
 redis-server
 
-Run backend:
+**Run backend:**
 
 npm run dev
 
-Run worker:
+**Run worker:**
 
 npm run worker
 
-Run frontend:
+**Run frontend:**
 
 npm start
-🧪 Future Improvements
+**🧪 Future Improvements**
 
 Group video calls
 
@@ -275,7 +275,7 @@ Kubernetes deployment
 
 Observability (logs + metrics)
 
-🎯 What This Project Demonstrates
+**🎯 What This Project Demonstrates**
 
 Real-time system design
 
