@@ -137,7 +137,7 @@ Scalable design
 Clean separation of concerns
 **📦 Installation**
 **1. Clone the repository**
-git clone https://github.com/your-username/realtime-chat-system.git
+https://github.com/Simon-li09/real-time-chat-app.git
 cd realtime-chat-system
 **2. Install dependencies**
 
