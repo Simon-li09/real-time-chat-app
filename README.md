@@ -1,177 +1,165 @@
-**Real-Time Communication Platform
-Chat • Voice Notes • Voice Calls • Video Calls • Async Processing**
+🚀 Real-Time Communication System
+Chat • Voice Notes • Voice Calls • Video Calls • Async Processing
 
-A scalable real-time communication system built with WebSockets, WebRTC, and asynchronous background processing.
+A scalable real-time communication platform built using WebSockets and asynchronous background processing.
 
-This project demonstrates how to design and implement a production-style real-time system capable of handling messaging, voice communication, and video streaming without blocking core operations.
+This system handles messaging, voice notes, voice calls, and video calls in real time while offloading heavy tasks to background workers to maintain performance and responsiveness.
 
-**🧠 Project Overview**
+🧠 Project Overview
 
-**This application allows users to:**
+This application allows users to:
 
-Send and receive real-time text messages
+Send and receive real-time messages
 
 Record and send voice notes
 
-Make one-to-one voice calls
+Start voice calls
 
-Start real-time video calls
+Start video calls
 
-See user presence (online/offline)
+See online/offline presence
 
-Experience instant updates across devices
+Receive instant updates across sessions
 
-The system uses asynchronous processing to handle heavy tasks in the background while keeping communication fast and responsive.
+All communication is handled through persistent WebSocket connections, ensuring low-latency, event-driven interactions.
 
-**⚡ Core Features
-💬 Real-Time Messaging**
+⚡ Core Features
+💬 Real-Time Messaging
 
 Instant message delivery using WebSockets
 
 Typing indicators
 
-Message status (sent, delivered, read)
+Message delivery status
 
 Persistent chat history
 
-**🎙 Voice Notes**
+🎙 Voice Notes
 
-Record audio directly from browser
+Browser-based voice recording
 
-Upload audio file to server
+Audio upload via WebSocket
 
-**Background processing for:**
-
-File storage
+Background processing for:
 
 Compression
 
-Transcoding
+Format optimization
 
-Async notification when processing is complete
+Storage handling
 
-**📞 Voice Calls**
+Async completion notification
 
-Peer-to-peer voice communication using WebRTC
+Voice note processing runs in the background so the main server stays responsive.
 
-Real-time signaling via WebSocket
+📞 Voice Calls (WebSocket-Based Streaming)
 
-Call accept/reject handling
+Real-time voice data streamed via WebSocket
 
-Call status updates
+Call request / accept / reject flow
 
-**🎥 Video Calls**
+Live call state updates
 
-Live camera streaming using WebRTC
+Server-managed session control
 
-ICE candidate exchange via signaling server
+🎥 Video Calls (WebSocket-Based Streaming)
 
-Secure peer connection
+Real-time video frame streaming via WebSocket
 
-Real-time connection monitoring
+Server-coordinated call signaling
 
-**🏗 Architecture Overview**
+Live participant updates
 
-The system follows an event-driven, non-blocking architecture.
+Connection monitoring
 
-**1️⃣ Frontend**
+All media streams pass through the WebSocket server, allowing centralized control and monitoring.
+
+🏗 Architecture Overview
+
+This system follows an event-driven architecture with async background processing.
+
+1️⃣ Frontend
 
 React
 
 Socket.io-client
 
-WebRTC APIs (MediaDevices, RTCPeerConnection)
+MediaRecorder API
 
-**2️⃣ Backend**
+2️⃣ Backend
 
 Node.js
 
 Express
 
-Socket.io (signaling server)
+Socket.io (WebSocket server)
 
-REST API
-
-**3️⃣ Async Processing Layer**
+3️⃣ Async Processing Layer
 
 Redis
 
-Bull queue (or RabbitMQ)
+Bull Queue
 
 Worker processes
 
-**🔄 How It Works**
-Real-Time Messaging Flow
+4️⃣ Infrastructure
 
-User sends message
+Hosted on DigitalOcean Droplets
 
-Server receives message via WebSocket
+Redis running on DigitalOcean
 
-Message saved to database
+Nginx as reverse proxy
 
-Server instantly broadcasts message to recipient
+PM2 for process management
 
-**Background jobs triggered for:**
+🔄 System Flow
+Real-Time Communication Flow
 
-Analytics
+Client establishes WebSocket connection
 
-Spam detection
+User sends message or initiates call
 
-Push notifications
+Server validates and stores data
 
-Voice Note Processing Flow
+Server broadcasts event instantly
 
-User records voice note
+Background jobs triggered if needed
 
-Audio uploaded to server
+Async Processing Flow
 
-Server immediately acknowledges upload
+For tasks like:
 
-Audio sent to message queue
+Voice note compression
 
-**Worker:**
+Media optimization
 
-Compresses file
+Analytics processing
 
-Converts format
+Activity logging
 
-Stores in cloud storage
+Flow:
 
-System notifies recipient when ready
+Event triggers job creation
 
-This prevents blocking the main server thread.
+Job added to Redis queue
 
-Video / Voice Call Flow (WebRTC)
+Worker process picks up job
 
-User initiates call
+Worker processes task
 
-**Signaling server exchanges:**
+System emits update via WebSocket
 
-SDP offers
+This keeps the main thread non-blocking and scalable.
 
-Answers
+🛠 Tech Stack
 
-ICE candidates
-
-Peer-to-peer connection established
-
-Media streams directly between users
-
-Server only handles signaling (not media stream)
-
-This design reduces server load and improves scalability.
-
-**🛠 Tech Stack**
-
-**Frontend:**
+Frontend:
 
 React
 
 Socket.io-client
 
-WebRTC APIs
-
-**Backend:**
+Backend:
 
 Node.js
 
@@ -179,114 +167,112 @@ Express
 
 Socket.io
 
-**Database:**
+Database:
 
 MongoDB / PostgreSQL
 
-**Async Layer:**
+Async Layer:
 
 Redis
 
-Bull queue or RabbitMQ
+Bull Queue
 
 Worker services
 
-**Optional:**
+Infrastructure:
 
-Cloud storage (AWS S3 / Cloudinary)
+DigitalOcean Droplets
 
-STUN/TURN servers for WebRTC
+Nginx
 
-**📈 Scalability Considerations**
+PM2
 
-WebSocket clustering with Redis adapter
+📈 Scalability Strategy
 
-Horizontal scaling of worker processes
+Horizontal scaling of WebSocket servers
 
-Decoupled signaling and processing layers
+Redis adapter for multi-instance WebSocket communication
 
-Stateless backend services
+Separate worker processes
 
-Media streaming peer-to-peer to reduce server bandwidth
+Stateless API design
 
-**🔐 Security Considerations**
+Load-balanced DigitalOcean droplets
 
-JWT-based authentication
+🔐 Security
 
-Secure WebSocket connections (WSS)
+JWT authentication
 
-Encrypted WebRTC connections (DTLS/SRTP)
-
-Rate limiting
+Secure WebSocket (WSS)
 
 Input validation
 
+Rate limiting
+
 Secure media storage
 
-**📦 Installation**
+Server-side call session management
 
-**Clone repository:**
+📦 Installation
 
-git clone https://github.com/your-username/realtime-communication-platform.git
-cd realtime-communication-platform
+Clone repository:
 
-**Install dependencies:**
+git clone https://github.com/your-username/realtime-communication-system.git
+cd realtime-communication-system
 
-**Backend:**
+Install backend:
 
 cd server
 npm install
 
-**Frontend:**
+Install frontend:
 
 cd client
 npm install
 
-**Start Redis:**
+Start Redis:
 
 redis-server
 
-**Run backend:**
+Run backend:
 
 npm run dev
 
-**Run worker:**
+Run worker:
 
 npm run worker
 
-**Run frontend:**
+Run frontend:
 
 npm start
-**🧪 Future Improvements**
+🚀 Deployment (DigitalOcean)
 
-Group video calls
+Create Droplet
 
-Screen sharing
+Install Node.js
 
-Call recording
+Install Redis
 
-End-to-end encryption
+Configure Nginx reverse proxy
 
-Message search indexing
+Use PM2 for process management
 
-Push notifications
+Enable HTTPS
 
-Kubernetes deployment
+Configure firewall rules
 
-Observability (logs + metrics)
+🎯 What This Project Demonstrates
 
-**🎯 What This Project Demonstrates**
+Real-time WebSocket architecture
 
-Real-time system design
+Async job processing with queues
 
-Asynchronous job processing
+Media handling in real-time systems
 
-WebRTC implementation
+Event-driven backend design
 
-Event-driven architecture
-
-Scalable backend design
+Scalable cloud deployment (DigitalOcean)
 
 Non-blocking server operations
 
-Production-level thinking beyond CRUD apps
+Production-level system thinking
