@@ -1,278 +1,326 @@
-**🚀 Real-Time Communication System
-Chat • Voice Notes • Voice Calls • Video Calls • Async Processing**
+# Real-Time Communication System with Async Processing
 
-A scalable real-time communication platform built using WebSockets and asynchronous background processing.
+A scalable real-time communication platform built with **React**, **Django**, and **Node.js WebSockets**.
 
-This system handles messaging, voice notes, voice calls, and video calls in real time while offloading heavy tasks to background workers to maintain performance and responsiveness.
+The system supports real-time messaging, voice notes, video notes, voice/video calls, and status updates.
+It uses an asynchronous architecture to handle real-time communication and background processing efficiently.
 
-**🧠 Project Overview**
+---
 
-**This application allows users to:**
+# Architecture Overview
 
-Send and receive real-time messages
+The system separates responsibilities across services to improve performance and scalability.
 
-Record and send voice notes
+* **React** → Frontend user interface
+* **Django (Python)** → REST API, authentication, business logic
+* **Node.js** → WebSocket server for real-time communication and media streaming
+* **Redis** → Message broker between services
+* **PostgreSQL / MongoDB** → Database
+* **Cloud Storage (S3 / Cloudinary)** → Media storage
+
+```text
+React Frontend
+      |
+      | HTTP API
+      v
+Django Backend (Python)
+- Authentication
+- Database operations
+- Media uploads
+- Business logic
+      |
+      | Redis Pub/Sub
+      v
+Node.js WebSocket Server
+- Real-time messaging
+- Voice/video call streaming
+- Notifications
+- Online presence
+      |
+      v
+Connected Clients
+```
 
-Start voice calls
+---
 
-Start video calls
+# Features
 
-See online/offline presence
+## Messaging
 
-Receive instant updates across sessions
+* Real-time private messaging
+* Group messaging
+* Typing indicators
+* Message delivery updates
 
-All communication is handled through persistent WebSocket connections, ensuring low-latency, event-driven interactions.
+## Media Messaging
 
-**⚡ Core Features
-💬 Real-Time Messaging**
+* Voice notes
+* Video notes
+* Image sharing
+* File uploads
 
-Instant message delivery using WebSockets
+## Voice Calls
 
-Typing indicators
+* Real-time audio communication
+* Live audio streaming via WebSockets
 
-Message delivery status
+## Video Calls
 
-Persistent chat history
+* Real-time video communication
+* Media streaming handled by the WebSocket server
 
-**🎙 Voice Notes**
+## Status Updates
 
-Browser-based voice recording
+* Post image or video status
+* View other users’ status
+* Automatic expiration after 24 hours
 
-Audio upload via WebSocket
+## Presence System
 
-**Background processing for:**
+* Online/offline users
+* Activity updates
 
-Compression
+## Async Processing
 
-Format optimization
+Background tasks handled asynchronously.
 
-Storage handling
+Examples:
 
-Async completion notification
+* Media processing
+* Status expiration cleanup
+* Notification handling
+* Analytics tasks
 
-Voice note processing runs in the background so the main server stays responsive.
+---
 
-**📞 Voice Calls (WebSocket-Based Streaming)**
+# Project Structure
 
-Real-time voice data streamed via WebSocket
+```text
+real-time-system/
 
-Call request / accept / reject flow
+backend/
+│
+├── django_api/
+│   ├── manage.py
+│   ├── config/
+│   └── apps/
+│       ├── users/
+│       ├── chat/
+│       └── status/
+│
+├── websocket_server/
+│   ├── server.js
+│   ├── socket/
+│   │   ├── chat.socket.js
+│   │   └── call.socket.js
+│   └── redisClient.js
+│
+frontend/
+│
+└── react-app/
+```
 
-Live call state updates
+---
 
-Server-managed session control
+# Technology Stack
 
-**🎥 Video Calls (WebSocket-Based Streaming)**
+Frontend
 
-Real-time video frame streaming via WebSocket
+* React
+* WebSocket client
+* MediaRecorder API
 
-Server-coordinated call signaling
+Backend
 
-Live participant updates
+* Django
+* Django REST Framework
+* Node.js
+* Redis
 
-Connection monitoring
+Database
 
-All media streams pass through the WebSocket server, allowing centralized control and monitoring.
+* PostgreSQL or MongoDB
 
-**🏗 Architecture Overview**
+Infrastructure
 
-This system follows an event-driven architecture with async background processing.
+* Nginx
+* Docker (optional)
+* Cloud storage (AWS S3 / Cloudinary)
 
-**1️⃣ Frontend**
+---
 
-React
+# Installation
 
-Socket.io-client
+## Clone Repository
 
-MediaRecorder API
+```bash
+git clone https://github.com/yourusername/real-time-system.git
+cd real-time-system
+```
 
-**2️⃣ Backend**
+---
 
-Node.js
+# Backend Setup (Django)
 
-Express
+Create virtual environment:
 
-Socket.io (WebSocket server)
+```bash
+python -m venv venv
+```
 
-**3️⃣ Async Processing Layer**
+Activate environment:
 
-Redis
+Linux / macOS
 
-Bull Queue
+```bash
+source venv/bin/activate
+```
 
-Worker processes
+Windows
 
-**4️⃣ Infrastructure**
+```bash
+venv\Scripts\activate
+```
 
-Hosted on DigitalOcean Droplets
+Install dependencies:
 
-Redis running on DigitalOcean
+```bash
+pip install -r requirements.txt
+```
 
-Nginx as reverse proxy
+Run migrations:
 
-PM2 for process management
+```bash
+python manage.py migrate
+```
 
-**🔄 System Flow**
-Real-Time Communication Flow
+Start Django server:
 
-Client establishes WebSocket connection
+```bash
+python manage.py runserver
+```
 
-User sends message or initiates call
+---
 
-Server validates and stores data
+# WebSocket Server Setup
 
-Server broadcasts event instantly
+Navigate to the WebSocket server:
 
-Background jobs triggered if needed
+```bash
+cd websocket_server
+```
 
-Async Processing Flow
+Install dependencies:
 
-**For tasks like:**
-
-Voice note compression
-
-Media optimization
-
-Analytics processing
-
-Activity logging
-
-**Flow:**
-
-Event triggers job creation
-
-Job added to Redis queue
-
-Worker process picks up job
-
-Worker processes task
-
-System emits update via WebSocket
-
-This keeps the main thread non-blocking and scalable.
-
-**🛠 Tech Stack**
-
-**Frontend:**
-
-React
-
-Socket.io-client
-
-**Backend:**
-
-Node.js
-
-Express
-
-Socket.io
-
-**Database:**
-
-MongoDB / PostgreSQL
-
-**Async Layer:**
-
-Redis
-
-Bull Queue
-
-Worker services
-
-**Infrastructure:**
-
-DigitalOcean Droplets
-
-Nginx
-
-PM2
-
-**📈 Scalability Strategy**
-
-Horizontal scaling of WebSocket servers
-
-Redis adapter for multi-instance WebSocket communication
-
-Separate worker processes
-
-Stateless API design
-
-Load-balanced DigitalOcean droplets
-
-**🔐 Security**
-
-JWT authentication
-
-Secure WebSocket (WSS)
-
-Input validation
-
-Rate limiting
-
-Secure media storage
-
-Server-side call session management
-
-**📦 Installation**
-
-**Clone repository:**
-
-git clone https://github.com/Simon-li09/real-time-chat-app.git
-cd realtime-communication-system
-
-**Install backend:**
-
-cd server
+```bash
 npm install
+```
 
-**Install frontend:**
+Start server:
 
-cd client
+```bash
+node server.js
+```
+
+---
+
+# Frontend Setup
+
+Navigate to frontend directory:
+
+```bash
+cd frontend/react-app
+```
+
+Install dependencies:
+
+```bash
 npm install
+```
 
-**Start Redis:**
+Run development server:
 
-redis-server
-
-**Run backend:**
-
-npm run dev
-
-**Run worker:**
-
-npm run worker
-
-**Run frontend:**
-
+```bash
 npm start
-**🚀 Deployment (DigitalOcean)**
+```
 
-Create Droplet
+---
 
-Install Node.js
+# Environment Variables
 
-Install Redis
+Create a `.env` file in the backend directory.
 
-Configure Nginx reverse proxy
+Example configuration:
 
-Use PM2 for process management
+```text
+DJANGO_SECRET_KEY=your_secret_key
+DATABASE_URL=your_database_url
+REDIS_URL=redis://localhost:6379
+WEBSOCKET_SERVER=ws://localhost:4000
+MEDIA_STORAGE_URL=your_storage_url
+```
 
-Enable HTTPS
+---
 
-Configure firewall rules
+# Real-Time Communication Flow
 
-**🎯 What This Project Demonstrates**
+1. User sends message from React.
+2. React calls Django REST API.
+3. Django stores the message in the database.
+4. Django publishes a message event to Redis.
+5. Node.js WebSocket server receives the event.
+6. Node broadcasts the message instantly to connected clients.
 
-Real-time WebSocket architecture
+---
 
-Async job processing with queues
+# Voice / Video Call Flow
 
-Media handling in real-time systems
+1. User initiates a call from the frontend.
+2. WebSocket server sends an **incoming call event** to the receiver.
+3. Receiver accepts or rejects the call.
+4. Audio/video streams are transmitted through the WebSocket server.
+5. Server distributes media data to the connected participants.
 
-Event-driven backend design
+---
 
-Scalable cloud deployment (DigitalOcean)
+# Media Upload Flow
 
-Non-blocking server operations
+1. User records voice/video notes.
+2. React uploads media to Django API.
+3. Media stored in cloud storage.
+4. URL saved in database.
+5. Notification sent via WebSocket.
 
-Production-level system thinking
+---
+
+# Future Improvements
+
+* Push notifications
+* Message reactions
+* Group voice/video calls
+* Media compression
+* End-to-end encryption
+* Scalable microservices architecture
+
+---
+
+# Contribution
+
+Contributions are welcome.
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Submit pull request
+
+---
+
+# License
+
+MIT License
+
+---
+
+# Author
+
+Lifted Simon
