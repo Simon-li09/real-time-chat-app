@@ -1,0 +1,8 @@
+django>=4.2
+channels>=4.0
+daphne>=4.0
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
+Pillow
+python-dotenv
