@@ -24,12 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-zoq7hoik5w64d$z%((ep%3b^kq1+1$xn!fcedipp@p1o=7q((*')
+SECRET_KEY = os.getenv('SECRET_KEY', 'xa_n1X1DPwksFzeQwmHn7bf_wx1_59WFBdH0gZZD5h0HHfMtSUFrAP2fEPUgFsNEgzY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'real-time-back.onrender.com').split(',')
+
+JWT_SECRET = os.getenv('JWT_SECRET', 'EuIJWiPX9sHuW8LZIoJAMPe--aiVib6fC6Zx8-0TMWJhO_KYKZyykogK2c5XneUf1wU')
 
 # Application definition
 
@@ -162,7 +164,7 @@ USE_TZ = True
 
 # MongoDB Configuration
 import pymongo
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb://127.0.0.1:27017/')
+MONGO_URI = os.getenv('MONGO_URI') or 'mongodb://127.0.0.1:27017/'
 try:
     mongo_client = pymongo.MongoClient(MONGO_URI)
     mongo_db = mongo_client['realtime_db']
