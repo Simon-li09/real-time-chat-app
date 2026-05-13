@@ -1,0 +1,1 @@
+web: cd backend/django_api && daphne config.asgi:application --bind 0.0.0.0:$PORT
