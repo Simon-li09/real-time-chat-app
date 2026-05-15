@@ -424,14 +424,7 @@ const Chat = () => {
                 )}
             </main>
 
-            {/* Mobile Bottom Nav - Only visible on mobile when sidebar is active */}
-            {!selectedUser && (
-                <MobileNavbar
-                    onOpenSidebar={() => setSelectedUser(null)}
-                    onOpenStatus={() => setActiveStatuses(true)}
-                    onOpenSettings={() => setIsSettingsOpen(true)}
-                />
-            )}
+            {/* Main Modals and Overlays */}
 
             {isSettingsOpen && (
                 <SettingsModal 
