@@ -103,56 +103,92 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-xl z-[300] flex flex-col items-center justify-center p-6 transition-all duration-500 animate-in fade-in">
-            <div className="w-full max-w-4xl h-full max-h-[80vh] bg-slate-800 rounded-3xl overflow-hidden shadow-2xl relative border border-slate-700/50 flex flex-col">
-                
-                {/* Remote Video (Full Screen) */}
-                <div className="flex-1 bg-black relative">
-                    {remoteStream ? (
-                        <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover" />
-                    ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center space-y-6">
-                            <div className="w-32 h-32 rounded-full bg-emerald-500/20 flex items-center justify-center border-4 border-emerald-500 animate-pulse transition-all">
-                                {caller.username.charAt(0).toUpperCase()}
-                            </div>
-                            <div className="text-center">
-                                <h2 className="text-3xl font-bold text-white mb-2">{caller.username}</h2>
-                                <p className="text-sm text-slate-300 mb-1">Caller ID: {caller.id}</p>
-                                <p className="text-emerald-400 font-mono tracking-widest uppercase text-sm animate-pulse">
-                                    {status === 'incoming' ? 'Incoming Call...' : status === 'ringing' ? 'Ringing...' : 'Connecting...'}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Local Video (PIP) */}
-                    <div className="absolute top-6 right-6 w-48 aspect-video bg-slate-900 rounded-2xl overflow-hidden border-2 border-white/10 shadow-2xl z-10 transition-all hover:scale-110">
-                        <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-                    </div>
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-[#111b21] pb-12 pt-20 text-white animate-in fade-in transition-all duration-500">
+            
+            {/* Remote Video (Full Screen if active) */}
+            {remoteStream && (
+                <div className="absolute inset-0 z-0 bg-black">
+                    <video ref={remoteVideoRef} autoPlay playsInline className="w-full h-full object-cover opacity-80" />
                 </div>
+            )}
 
-                {/* Controls Area */}
-                <div className="p-8 bg-slate-900/80 backdrop-blur-md flex justify-center items-center space-x-12 z-20 border-t border-slate-700/50">
-                    {status === 'incoming' || status === 'ringing' ? (
-                        <button 
-                            onClick={handleAccept}
-                            className="w-16 h-16 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition-all hover:scale-110 active:scale-90"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H3.75A2.25 2.25 0 001.5 4.5v2.25z" />
-                            </svg>
+            {/* Local Video (PIP) */}
+            {localStream && status === 'connected' && (
+                <div className="absolute top-16 right-6 w-24 aspect-[3/4] bg-slate-800 rounded-xl overflow-hidden border-2 border-slate-700 shadow-2xl z-20">
+                    <video ref={localVideoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                </div>
+            )}
+
+            <div className="flex flex-col items-center z-10">
+                <p className="mb-8 text-xs font-semibold uppercase tracking-widest text-emerald-500">
+                    {status === 'incoming' ? 'Incoming call...' : status === 'ringing' ? 'Ringing...' : status === 'calling' ? 'Calling...' : '00:15'}
+                </p>
+                
+                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-emerald-100 text-5xl font-bold text-emerald-700 shadow-2xl">
+                    {caller.username.charAt(0).toUpperCase()}
+                </div>
+                
+                <h2 className="mt-6 text-3xl font-light capitalize">{caller.username}</h2>
+                {status !== 'connected' && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-emerald-500">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+                        Online
+                    </div>
+                )}
+            </div>
+
+            <div className="w-full max-w-md px-10 z-10">
+                
+                {status !== 'incoming' && (
+                    <div className="mb-12 grid grid-cols-3 gap-y-8 text-center text-xs text-gray-400">
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">🎤</div>
+                            Mute
                         </button>
-                    ) : null}
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">⋮⋮⋮</div>
+                            Keypad
+                        </button>
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">🔊</div>
+                            Speaker
+                        </button>
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">+</div>
+                            Add call
+                        </button>
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">📹</div>
+                            Video
+                        </button>
+                        <button className="flex flex-col items-center gap-2 hover:text-white transition-colors">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-xl text-white">...</div>
+                            More
+                        </button>
+                    </div>
+                )}
 
+                <div className={`flex items-center ${status === 'incoming' ? 'justify-around' : 'justify-center'}`}>
                     <button 
                         onClick={handleEnd}
-                        className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-500/30 transition-all hover:scale-110 active:scale-90"
+                        className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500 text-2xl shadow-lg transition-transform hover:scale-110"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-8 h-8 rotate-[135deg]">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H3.75A2.25 2.25 0 001.5 4.5v2.25z" />
-                        </svg>
+                        📞
                     </button>
+                    
+                    {status === 'incoming' && (
+                        <div className="flex flex-col items-center gap-2">
+                            <div className="animate-bounce text-gray-500">↑↑↑</div>
+                            <button 
+                                onClick={handleAccept}
+                                className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-2xl shadow-lg transition-transform hover:scale-110"
+                            >
+                                📞
+                            </button>
+                        </div>
+                    )}
                 </div>
+                
             </div>
         </div>
     );

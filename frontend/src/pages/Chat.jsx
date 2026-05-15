@@ -341,33 +341,9 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex h-screen bg-stone-50 font-sans">
-            <div className="w-80 border-r border-slate-200 bg-white flex flex-col">
-                <div className="p-4 border-b border-slate-200 bg-emerald-600 text-white shadow-sm z-10 flex justify-between items-center">
-                    <h2 className="text-xl font-bold tracking-wide">Chats</h2>
-                    <button 
-                        onClick={() => setIsCallHistoryOpen(true)}
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-                        title="Call history"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.05 5.05a7 7 0 00-9.9 9.9l.7.7a2 2 0 002.83 0l1.06-1.06a2 2 0 00.58-1.22v-.44a2 2 0 00-1.47-1.95l-.7-.18a1 1 0 01-.73-.83 4 4 0 014.75-4.74 1 1 0 01.83.74l.18.7a2 2 0 001.95 1.47h.44a2 2 0 001.22-.58l1.06-1.06a2 2 0 000-2.83l-.7-.7z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16h.01M12 20h.01M16 16h.01" />
-                        </svg>
-                    </button>
-                    <button 
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-                        title="Settings"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </button>
-                </div>
-                <StatusTray onSelectStatus={setActiveStatuses} />
-                <div className="flex-1 overflow-y-auto">
+        <div className="flex h-screen w-full bg-white text-slate-800 antialiased relative overflow-hidden">
+            <div className={`${selectedUser ? 'hidden md:flex' : 'flex'} w-full md:w-96 flex-col border-r border-gray-100`}>
+                <div className="flex-1 overflow-y-hidden h-full relative">
                     <UserList 
                         users={[...groups, ...users]} 
                         selectedUser={selectedUser} 
@@ -379,184 +355,169 @@ const Chat = () => {
                             loadGroups();
                         }}
                     />
+                    <StatusTray onSelectStatus={setActiveStatuses} />
                     <CallLog logs={callLog} />
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col relative">
+            <main className={`${!selectedUser ? 'hidden md:flex' : 'flex'} flex-1 flex-col bg-[#F8F9FA] relative w-full h-full`}>
                 {selectedUser ? (
                     <>
-                        <div className="px-6 py-4 border-b border-slate-200 bg-white flex items-center shadow-sm z-10">
-                            {selectedUser.profile_picture ? (
-                                <img src={selectedUser.profile_picture} alt={selectedUser.username} className="w-10 h-10 rounded-full object-cover mr-4 shadow-sm" />
-                            ) : (
-                                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-lg mr-4">
-                                    {selectedUser.username.charAt(0).toUpperCase()}
-                                </div>
-                            )}
-                            <div>
-                                <h3 className="text-lg font-semibold text-slate-800">{selectedUser.is_group ? selectedUser.name : selectedUser.username}</h3>
-                                <div className="text-xs text-emerald-600 font-medium flex items-center">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
-                                    {onlineUsers.includes(selectedUser.id.toString()) ? 'Online' : 'Offline'}
-                                    {typingUser && <span className="ml-2 text-slate-400 italic">• {typingUser} is typing...</span>}
+                        <header className="flex items-center justify-between bg-white px-6 py-3 shadow-sm z-10">
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={() => setSelectedUser(null)}
+                                    className="md:hidden mr-2 p-1 text-emerald-600 hover:bg-emerald-50 rounded-full"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                                    </svg>
+                                </button>
+                                {selectedUser.profile_picture ? (
+                                    <img src={selectedUser.profile_picture} alt={selectedUser.username} className="flex h-10 w-10 items-center justify-center rounded-full object-cover" />
+                                ) : (
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-700">
+                                        {selectedUser.username.charAt(0).toUpperCase()}
+                                    </div>
+                                )}
+                                <div>
+                                    <h3 className="text-sm font-bold capitalize">{selectedUser.is_group ? selectedUser.name : selectedUser.username}</h3>
+                                    <div className="flex items-center gap-1.5 text-[10px] text-emerald-500">
+                                        {onlineUsers.includes(selectedUser.id.toString()) ? (
+                                            <><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Online</>
+                                        ) : (
+                                            <span className="text-gray-400">Offline</span>
+                                        )}
+                                        {typingUser && <span className="text-emerald-500 italic ml-1">• typing...</span>}
+                                    </div>
                                 </div>
                             </div>
                             
                             {!selectedUser.is_group && (
-                                <div className="ml-auto flex items-center gap-2">
+                                <div className="flex gap-5 text-emerald-600 items-center">
                                     <button 
+                                        className="hover:opacity-70 text-lg"
                                         onClick={() => {
                                             addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'audio' });
                                             setActiveCall({ caller: selectedUser, isIncoming: false });
                                         }}
-                                        className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-full transition-all"
                                         title="Voice Call"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H3.75A2.25 2.25 0 001.5 4.5v2.25z" />
-                                        </svg>
-                                    </button>
-                                    <button 
-                                        onClick={() => {
-                                            addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'video' });
-                                            setActiveCall({ caller: selectedUser, isIncoming: false, isVideo: true });
-                                        }}
-                                        className="p-2.5 text-emerald-600 hover:bg-emerald-50 rounded-full transition-all"
-                                        title="Video Call"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6.75L21 12l-5.25 5.25m-10.5 0L0 12l5.25-5.25m7.5-3v15" />
-                                        </svg>
-                                    </button>
+                                    >📞</button>
+                                    <button className="hover:opacity-70 font-bold text-lg" title="Code">&lt;/&gt;</button>
+                                    <button className="hover:opacity-70 text-2xl" title="More options">⋮</button>
                                 </div>
                             )}
-                        </div>
+                        </header>
 
                         {wsStatus !== 'connected' && (
-                            <div className="px-6 py-3 bg-amber-50 text-amber-700 border-t border-amber-100 text-sm">
-                                Chat connection status: <strong>{wsStatus}</strong>. Messages will send once connected.
+                            <div className="px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-100 text-xs text-center font-medium shadow-sm">
+                                Chat connection status: <strong>{wsStatus}</strong>
                             </div>
                         )}
 
-                        <div className="flex-1 overflow-y-auto bg-stone-50/50 p-4 relative" style={{ backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+                        <div className="flex-1 overflow-y-auto p-4 md:p-6 relative">
                             <ChatBox messages={messages} currentUserId={user.id} />
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className="p-4 bg-white border-t border-slate-200">
-                            <form onSubmit={handleSendMessage} className="flex max-w-4xl mx-auto items-center space-x-3 gap-2">
-                                <label className="p-2.5 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-full transition-all cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.5l-10.74 10.74a1.5 1.5 0 11-2.122-2.122l10.512-10.512" />
-                                    </svg>
-                                    <input 
-                                        type="file" 
-                                        className="hidden" 
-                                        onChange={async (e) => {
-                                            const file = e.target.files[0];
-                                            if (!file) return;
+                        <footer className="flex items-center gap-4 bg-white px-4 py-3 md:px-6 md:py-4 shadow-[0_-1px_10px_rgba(0,0,0,0.02)] z-10 pb-safe">
+                            <label className="text-xl text-gray-400 hover:text-gray-600 cursor-pointer p-1">
+                                📎
+                                <input 
+                                    type="file" 
+                                    className="hidden" 
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (!file) return;
+                                        
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        try {
+                                            const res = await messageService.uploadMedia(formData);
+                                            const type = file.type.startsWith('image/') ? 'image' : 
+                                                         file.type.startsWith('video/') ? 'video' : 
+                                                         file.type.startsWith('audio/') ? 'voice' : 'text';
                                             
-                                            const formData = new FormData();
-                                            formData.append('file', file);
-                                            try {
-                                                const res = await messageService.uploadMedia(formData);
-                                                const type = file.type.startsWith('image/') ? 'image' : 
-                                                             file.type.startsWith('video/') ? 'video' : 
-                                                             file.type.startsWith('audio/') ? 'voice' : 'text';
-                                                
-                                                const payload = {
-                                                    message: `Sent a ${type}`,
-                                                    message_type: type,
-                                                    file_url: res.data.file_url 
-                                                };
-                                                if (selectedUser.is_group) payload.group_id = selectedUser.id;
-                                                else payload.receiver_id = selectedUser.id;
-                                                
-                                                socketService.send('send_message', payload);
-                                            } catch (err) {
-                                                console.error('Upload failed', err);
-                                            }
-                                        }}
+                                            const payload = {
+                                                message: `Sent a ${type}`,
+                                                message_type: type,
+                                                file_url: res.data.file_url 
+                                            };
+                                            if (selectedUser.is_group) payload.group_id = selectedUser.id;
+                                            else payload.receiver_id = selectedUser.id;
+                                            
+                                            socketService.send('send_message', payload);
+                                        } catch (err) {
+                                            console.error('Upload failed', err);
+                                        }
+                                    }}
+                                />
+                            </label>
+                            
+                            {!selectedUser.is_group && !isMutual ? (
+                                <div className="flex-1 py-3 px-6 bg-amber-50 border border-amber-100 rounded-full flex items-center justify-center text-amber-700 text-xs font-medium animate-pulse">
+                                    Mutual follow required to send messages
+                                </div>
+                            ) : isRecording ? (
+                                <VoiceRecorder 
+                                    onCancel={() => setIsRecording(false)}
+                                    onRecordingComplete={async (file) => {
+                                        setIsRecording(false);
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        try {
+                                            const res = await messageService.uploadMedia(formData);
+                                            const payload = {
+                                                message: 'Sent a voice note',
+                                                message_type: 'voice',
+                                                file_url: res.data.file_url
+                                            };
+                                            if (selectedUser.is_group) payload.group_id = selectedUser.id;
+                                            else payload.receiver_id = selectedUser.id;
+                                            socketService.send('send_message', payload);
+                                        } catch (err) {
+                                            console.error('Voice upload failed', err);
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <form onSubmit={handleSendMessage} className="relative flex-1 flex items-center">
+                                    <input
+                                        type="text"
+                                        value={newMessage}
+                                        onChange={handleTyping}
+                                        placeholder="Type a message..."
+                                        className="w-full rounded-full bg-gray-100 px-5 py-3 text-sm outline-none focus:bg-gray-200 transition-colors"
+                                        disabled={wsStatus !== 'connected'}
                                     />
-                                </label>
-
-                                <button 
-                                    type="button"
-                                    onClick={() => setIsRecording(true)}
-                                    className="p-2.5 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-full transition-all"
-                                    title="Voice Note"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                                    </svg>
-                                </button>
-
-                                {!selectedUser.is_group && !isMutual ? (
-                                    <div className="flex-1 py-3 px-6 bg-amber-50 border border-amber-100 rounded-2xl flex items-center justify-center text-amber-700 text-sm font-medium animate-pulse">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2">
-                                            <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
-                                        </svg>
-                                        Mutual follow required to send messages
-                                    </div>
-                                ) : isRecording ? (
-                                    <VoiceRecorder 
-                                        onCancel={() => setIsRecording(false)}
-                                        onRecordingComplete={async (file) => {
-                                            setIsRecording(false);
-                                            const formData = new FormData();
-                                            formData.append('file', file);
-                                            try {
-                                                const res = await messageService.uploadMedia(formData);
-                                                const payload = {
-                                                    message: 'Sent a voice note',
-                                                    message_type: 'voice',
-                                                    file_url: res.data.file_url
-                                                };
-                                                if (selectedUser.is_group) payload.group_id = selectedUser.id;
-                                                else payload.receiver_id = selectedUser.id;
-                                                socketService.send('send_message', payload);
-                                            } catch (err) {
-                                                console.error('Voice upload failed', err);
-                                            }
-                                        }}
-                                    />
-                                ) : (
-                                    <>
-                                        <input
-                                            type="text"
-                                            value={newMessage}
-                                            onChange={handleTyping}
-                                            placeholder="Type a message..."
-                                            className="flex-1 py-3 px-4 bg-slate-100 border border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all shadow-sm text-black font-medium"
-                                            disabled={wsStatus !== 'connected'}
-                                        />
-                                        <button 
-                                            type="submit" 
-                                            disabled={!newMessage.trim() || wsStatus !== 'connected'}
-                                            className="p-3 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 ml-1">
-                                                <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-                                            </svg>
-                                        </button>
-                                    </>
-                                )}
-                            </form>
-                        </div>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setIsRecording(true)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-500 text-lg"
+                                        title="Voice Note"
+                                    >🎙️</button>
+                                </form>
+                            )}
+                            
+                            <button 
+                                onClick={handleSendMessage}
+                                disabled={!newMessage.trim() || wsStatus !== 'connected'}
+                                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-md transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 flex-shrink-0"
+                            >
+                                ➤
+                            </button>
+                        </footer>
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center bg-stone-50">
-                        <div className="w-24 h-24 mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-emerald-500">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                            </svg>
+                    <div className="flex-1 flex flex-col items-center justify-center bg-[#F8F9FA]">
+                        <div className="w-20 h-20 mb-4 rounded-full bg-emerald-100 flex items-center justify-center text-3xl">
+                            💬
                         </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Welcome to SecureChat</h2>
-                        <p className="text-slate-500 max-w-sm text-center">Select a user from the sidebar to start a new conversation or continue an existing one.</p>
+                        <h2 className="text-xl font-bold text-gray-800 mb-2">SecureChat Web</h2>
+                        <p className="text-gray-500 text-sm max-w-xs text-center">Select a user to view your conversations and send messages securely.</p>
                     </div>
                 )}
-            </div>
+            </main>
 
             {isSettingsOpen && (
                 <SettingsModal 
