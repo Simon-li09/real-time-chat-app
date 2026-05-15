@@ -58,12 +58,13 @@ const ChatSidebar = ({
           {/* WhatsApp Vertical Icon Bar (Desktop Only) */}
           <div className="hidden w-16 flex-col items-center border-r border-slate-200 bg-[#eae6df] py-4 md:flex">
             <div className="flex flex-col gap-6 text-slate-600">
-              <button className="text-xl">💬</button>
-              <button className="text-xl">⭕</button>
-              <button className="text-xl">👥</button>
-              <button className="text-xl">⚙️</button>
+              <button className="text-xl hover:text-slate-900 transition" title="Chats">💬</button>
+              <button onClick={onOpenCallHistory} className="text-xl hover:text-slate-900 transition" title="Calls">📞</button>
+              <button onClick={onOpenStatus} className="text-xl hover:text-slate-900 transition" title="Status">⭕</button>
+              <button className="text-xl hover:text-slate-900 transition" title="Communities">👥</button>
+              <button onClick={onOpenSettings} className="text-xl hover:text-slate-900 transition" title="Settings">⚙️</button>
             </div>
-            <button className="mt-auto text-xl" onClick={onOpenSettings}>👤</button>
+            <button className="mt-auto text-xl hover:text-slate-900 transition" onClick={onOpenSettings} title="Profile">👤</button>
           </div>
 
           <div className="flex flex-1 flex-col overflow-hidden bg-white">
