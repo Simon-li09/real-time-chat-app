@@ -1,4 +1,5 @@
 import json
+# v1.1.2 - Removed follow restrictions
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.cache import cache
