@@ -19,17 +19,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         
-        # Join global presence group
-        await self.channel_layer.group_add(
-            'presence_broadcast',
-            self.channel_name
-        )
-
         await self.accept()
 
-        # Mark user as online and broadcast
+        # Mark user as online and broadcast only to allowed users
         await self.update_user_status(True)
         await self.broadcast_presence(True)
+
 
     async def disconnect(self, close_code):
         # Leave room groups
@@ -37,14 +32,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        await self.channel_layer.group_discard(
-            'presence_broadcast',
-            self.channel_name
-        )
+
 
         # Mark user as offline
         await self.update_user_status(False)
         await self.broadcast_presence(False)
+
 
     async def receive(self, text_data):
         try:
@@ -218,14 +211,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send_json({'type': 'error', 'message': message, 'code': code})
 
     async def broadcast_presence(self, is_online):
-        await self.channel_layer.group_send(
-            'presence_broadcast',
-            {
-                'type': 'presence_update',
-                'user_id': self.user_id,
-                'is_online': is_online
-            }
-        )
+        # Presence should be visible only to users that have added this user.
+        # We compute allowed viewers and send directly to their room groups.
+        viewer_ids = await self.get_allowed_viewers(self.user_id)
+        for viewer_id in viewer_ids:
+            await self.channel_layer.group_send(
+                f'user_{viewer_id}',
+                {
+                    'type': 'presence_update',
+                    'user_id': self.user_id,
+                    'is_online': is_online
+                }
+            )
+
+    @database_sync_to_async
+    def get_allowed_viewers(self, target_user_id):
+        # Based on Follow table: follower_id -> following_id
+        # Interpret “added users” as “people I follow” (following).
+        return list(Follow.objects.filter(following_id=target_user_id)
+                    .values_list('follower_id', flat=True))
+
 
     # Database Sync Methods
     @database_sync_to_async
