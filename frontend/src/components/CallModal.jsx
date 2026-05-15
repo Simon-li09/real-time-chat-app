@@ -48,7 +48,7 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
 
                 // Signaling Listeners
                 const unsubSignal = socketService.on('rtc_signal', async (data) => {
-                    if (data.from != caller.id) return;
+                    if (String(data.from) !== String(caller.id)) return;
                     const { type, offer, answer, candidate } = data.signal;
 
                     if (type === 'offer' && isIncoming) {

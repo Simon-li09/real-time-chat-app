@@ -58,30 +58,12 @@ const ChatBox = ({ messages, currentUserId, settings }) => {
                                 }`}
                             >
                                 <div className={`text-sm break-words`}>
-                                    {msg.message_type === 'image' ? (
-                                        <div className="rounded-lg overflow-hidden my-1 bg-gray-100 min-h-[100px] flex items-center justify-center">
-                                            <img 
-                                                src={msg.file_url || msg.message_text} 
-                                                alt="Shared media" 
-                                                className="max-w-full h-auto max-h-72 object-contain hover:scale-105 transition-transform cursor-pointer"
-                                                loading="lazy"
-                                                onClick={() => window.open(msg.file_url || msg.message_text, '_blank')}
-                                            />
-                                        </div>
-                                    ) : msg.message_type === 'video' ? (
+                                    {msg.message_type === 'video' ? (
                                         <div className="rounded-lg overflow-hidden my-1 bg-black">
                                             <video 
                                                 src={msg.file_url || msg.message_text} 
                                                 controls 
                                                 className="max-w-full h-auto max-h-72"
-                                            />
-                                        </div>
-                                    ) : msg.message_type === 'voice' ? (
-                                        <div className="my-1 py-1">
-                                            <audio 
-                                                src={msg.file_url || msg.message_text} 
-                                                controls 
-                                                className="h-8 max-w-[200px]"
                                             />
                                         </div>
                                     ) : (

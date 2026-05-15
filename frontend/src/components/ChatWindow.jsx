@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import MessageBubble from './MessageBubble';
-import VoiceRecorder from './VoiceRecorder';
 
 const ChatWindow = ({
   selectedUser,
@@ -9,11 +8,6 @@ const ChatWindow = ({
   newMessage,
   onMessageChange,
   onSendMessage,
-  onStartRecording,
-  onCancelRecording,
-  onRecordingComplete,
-  isRecording,
-  wsStatus,
   onBack,
   onOpenCall,
   isMutual,
@@ -82,49 +76,25 @@ const ChatWindow = ({
 
       <footer className="sticky bottom-0 z-20 bg-[#f0f2f5] px-2 py-2 md:px-4">
         <div className="flex items-center gap-2 max-w-5xl mx-auto">
-          {!isRecording && (
-            <>
-              <button className="p-2 text-2xl text-slate-500">😊</button>
-              <button className="p-2 text-2xl text-slate-500">📎</button>
-            </>
-          )}
+          <div className="flex-1 flex items-center gap-2 bg-white rounded-lg px-3 py-1 shadow-sm">
+            <form onSubmit={onSendMessage} className="flex-1">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => onMessageChange(e.target.value)}
+                placeholder="Type a message"
+                className="w-full bg-transparent py-2 text-sm text-slate-900 outline-none"
+              />
+            </form>
+          </div>
 
-          {isRecording ? (
-            <VoiceRecorder 
-              onCancel={onCancelRecording} 
-              onRecordingComplete={onRecordingComplete} 
-            />
-          ) : (
-            <div className="flex-1 flex items-center gap-2 bg-white rounded-lg px-3 py-1 shadow-sm">
-              <form onSubmit={onSendMessage} className="flex-1">
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => onMessageChange(e.target.value)}
-                  placeholder="Type a message"
-                  className="w-full bg-transparent py-2 text-sm text-slate-900 outline-none"
-                />
-              </form>
-            </div>
-          )}
-
-          {newMessage.trim() || isRecording ? (
-             <button
-                onClick={onSendMessage}
-                className="inline-flex h-12 w-12 items-center justify-center text-slate-500"
-                type="button"
-              >
-                {isRecording ? '' : '➤'}
-              </button>
-          ) : (
-            <button
-              type="button"
-              onClick={onStartRecording}
-              className="inline-flex h-12 w-12 items-center justify-center text-slate-500 text-2xl"
-            >
-              🎙️
-            </button>
-          )}
+          <button
+            onClick={onSendMessage}
+            className="inline-flex h-12 w-12 items-center justify-center text-slate-500"
+            type="button"
+          >
+            ➤
+          </button>
         </div>
       </footer>
     </div>

@@ -21,7 +21,6 @@ const Chat = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [isRecording, setIsRecording] = useState(false);
     
     // Check if current selection is a mutual follow (for 1-to-1 chats)
     const isMutual = selectedUser && 
@@ -383,28 +382,6 @@ const Chat = () => {
                         newMessage={newMessage}
                         onMessageChange={handleTyping}
                         onSendMessage={handleSendMessage}
-                        onStartRecording={() => setIsRecording(true)}
-                        onCancelRecording={() => setIsRecording(false)}
-                        onRecordingComplete={async (file) => {
-                            setIsRecording(false);
-                            const formData = new FormData();
-                            formData.append('file', file);
-                            try {
-                                const res = await messageService.uploadMedia(formData);
-                                const payload = {
-                                    message: 'Sent a voice note',
-                                    message_type: 'voice',
-                                    file_url: res.data.file_url
-                                };
-                                if (selectedUser.is_group) payload.group_id = selectedUser.id;
-                                else payload.receiver_id = selectedUser.id;
-                                socketService.send('send_message', payload);
-                            } catch (err) {
-                                console.error('Voice upload failed', err);
-                            }
-                        }}
-                        isRecording={isRecording}
-                        wsStatus={wsStatus}
                         onBack={() => setSelectedUser(null)}
                         onOpenCall={() => {
                             addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'audio' });
