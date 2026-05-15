@@ -47,7 +47,14 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
                 }
 
                 // Signaling Listeners
+                // DEBUG: helps verify whether offer/answer/candidate arrive
+                console.log('[CallModal] rtc pc created. isIncoming=', isIncoming, 'caller.id=', caller.id);
                 const unsubSignal = socketService.on('rtc_signal', async (data) => {
+                    console.log('[CallModal] rtc_signal received', data);
+                    if (!pcRef.current) {
+                        console.warn('[CallModal] pcRef.current missing; dropping rtc_signal');
+                        return;
+                    }
                     if (String(data.from) !== String(caller.id)) return;
                     const { type, offer, answer, candidate } = data.signal;
 
