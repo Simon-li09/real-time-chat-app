@@ -51,7 +51,6 @@ const Chat = () => {
         sounds[type].play().catch(e => console.log('Sound blocked by browser'));
     };
 
-    const [typingUser, setTypingUser] = useState(null);
     const [wsStatus, setWsStatus] = useState('connecting');
     const isChatConnected = wsStatus === 'connected';
     const [callLog, setCallLog] = useState([]);
