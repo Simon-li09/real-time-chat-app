@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       <WelcomeOverlay />
-      <div className={`auth-container transition-opacity duration-1000 ${showContent ? "opacity-100" : "opacity-0"}`}>
+      <div className={`auth-container w-full h-full transition-opacity duration-1000 ${showContent ? "opacity-100" : "opacity-0"}`}>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -239,7 +239,12 @@ const Chat = () => {
     const handleFollowClick = async (userId) => {
         try {
             await userService.followUser(userId);
-            fetchUsers();
+            // Re-fetch users to update the UI
+            await fetchUsers();
+            // Also update any search results if applicable
+            if (selectedUser && selectedUser.id === userId) {
+                setSelectedUser(prev => ({ ...prev, is_following: true }));
+            }
         } catch (err) {
             console.error('Failed to follow user', err);
         }
@@ -352,7 +357,7 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex h-[100dvh] w-full bg-slate-950 text-slate-200 antialiased relative overflow-hidden">
+        <div className="flex h-screen w-screen bg-slate-950 text-slate-200 antialiased relative overflow-hidden m-0 p-0">
             {/* Sidebar - Hidden on mobile if a chat is selected */}
             <div className={`${selectedUser ? 'hidden md:block' : 'block'} w-full md:w-96 flex-shrink-0 h-full`}>
                 <ChatSidebar 

@@ -52,7 +52,7 @@ const ChatSidebar = ({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -320, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          className="fixed inset-y-0 left-0 z-40 w-full max-w-sm border-r border-slate-200 bg-white/95 backdrop-blur-xl shadow-2xl md:static md:translate-x-0 md:w-96 md:shadow-none"
+          className="fixed inset-y-0 left-0 z-40 w-full max-w-sm border-r border-slate-200 bg-white/95 backdrop-blur-xl shadow-2xl md:static md:translate-x-0 md:w-[400px] lg:w-[450px] md:max-w-none md:shadow-none"
         >
           <div className="flex h-full flex-col overflow-hidden">
             <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 bg-white/90 backdrop-blur">
@@ -98,7 +98,7 @@ const ChatSidebar = ({
             <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-6">
               <div className="mb-4 rounded-3xl bg-emerald-50 px-4 py-3 text-sm text-slate-700 shadow-sm">
                 <p className="font-semibold">Quick actions</p>
-                <p className="mt-1 text-xs text-slate-500">Tap a conversation to follow the flow.</p>
+                <p className="mt-1 text-xs text-slate-500">Tap a conversation to start chatting.</p>
               </div>
 
               {results.length === 0 ? (
@@ -117,10 +117,10 @@ const ChatSidebar = ({
                     const isOnline = onlineUsers.includes(String(id));
 
                     return (
-                      <button
+                      <div
                         key={`chat-${id}`}
                         onClick={() => onSelectUser(chat)}
-                        className={`group flex w-full items-start gap-3 rounded-3xl px-4 py-3 text-left transition ${
+                        className={`group flex w-full cursor-pointer items-start gap-3 rounded-3xl px-4 py-3 text-left transition ${
                           isSelected ? 'bg-emerald-50 shadow-sm' : 'hover:bg-slate-50'
                         }`}
                       >
@@ -172,7 +172,7 @@ const ChatSidebar = ({
                             )}
                           </div>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
