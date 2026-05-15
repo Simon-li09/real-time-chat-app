@@ -112,22 +112,28 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
 
     const handleAccept = async () => {
         if (!pcRef.current || pcRef.current.signalingState === 'closed') return;
-        
+
         try {
-            // Ensure we have a remote description before answering
-            if (pcRef.current.signalingState === 'have-remote-offer') {
-                const answer = await pcRef.current.createAnswer();
-                await pcRef.current.setLocalDescription(answer);
-                socketService.send('rtc_signal', {
-                    to: caller.id,
-                    signal: { type: 'answer', answer }
-                });
-                setStatus('connected');
-            } else {
-                console.warn('Cannot accept: Signaling state is', pcRef.current.signalingState);
+            // Prefer remoteDescription presence (more reliable than signalingState)
+            if (!pcRef.current.remoteDescription) {
+                console.warn('[CallModal] Accept pressed but remoteDescription missing. Waiting 300ms...');
+                await new Promise(r => setTimeout(r, 300));
             }
+
+            if (!pcRef.current.remoteDescription) {
+                console.warn('[CallModal] Accept aborted: remoteDescription still missing');
+                return;
+            }
+
+            const answer = await pcRef.current.createAnswer();
+            await pcRef.current.setLocalDescription(answer);
+            socketService.send('rtc_signal', {
+                to: caller.id,
+                signal: { type: 'answer', answer }
+            });
+            setStatus('connected');
         } catch (err) {
-            console.error('Failed to accept call:', err);
+            console.error('[CallModal] Failed to accept call:', err);
         }
     };
 
