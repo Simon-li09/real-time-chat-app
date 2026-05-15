@@ -89,6 +89,14 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
     }, [caller.id, isIncoming]);
 
     const handleAccept = async () => {
+        if (!pcRef.current) {
+            console.warn('[CallModal] handleAccept: pcRef.current missing');
+            return;
+        }
+        if (!pcRef.current.remoteDescription) {
+            console.warn('[CallModal] handleAccept: remoteDescription not set yet');
+            return;
+        }
         const answer = await pcRef.current.createAnswer();
         await pcRef.current.setLocalDescription(answer);
         socketService.send('rtc_signal', {
