@@ -95,6 +95,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         # Save and Broadcast
+        print(f"--- SAVING MESSAGE: sender={self.user_id} receiver={receiver_id} group={group_id} ---")
         message_data = await self.save_message(
             sender_id=self.user_id,
             receiver_id=receiver_id,
@@ -104,18 +105,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             file_url=file_url
         )
 
-        if message_data:
-            # Broadcast to recipient(s)
-            if group_id:
-                members = await self.get_group_members(group_id)
-                for member_id in members:
-                    if str(member_id) != str(self.user_id):
-                        await self.channel_layer.group_send(f'user_{member_id}', {'type': 'relay_message', 'data': message_data})
-            else:
-                await self.channel_layer.group_send(f'user_{receiver_id}', {'type': 'relay_message', 'data': message_data})
+        if not message_data:
+            print("FAILED TO SAVE MESSAGE")
+            await self.send_error("Server failed to save message")
+            return
 
-            # Confirm to sender
-            await self.send_json({'type': 'message_sent', 'data': message_data})
+        # Broadcast to recipient(s)
+        if group_id:
+            members = await self.get_group_members(group_id)
+            for member_id in members:
+                if str(member_id) != str(self.user_id):
+                    await self.channel_layer.group_send(f'user_{member_id}', {'type': 'relay_message', 'data': message_data})
+        else:
+            await self.channel_layer.group_send(f'user_{receiver_id}', {'type': 'relay_message', 'data': message_data})
+
+        # Confirm to sender
+        await self.send_json({'type': 'message_sent', 'data': message_data})
 
     async def handle_typing(self, data):
         receiver_id = data.get('receiver_id')
