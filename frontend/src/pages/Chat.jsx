@@ -357,9 +357,9 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex h-screen w-screen bg-slate-950 text-slate-200 antialiased relative overflow-hidden m-0 p-0">
+        <div className="flex h-screen w-screen bg-white text-slate-900 antialiased relative overflow-hidden m-0 p-0">
             {/* Sidebar - Hidden on mobile if a chat is selected */}
-            <div className={`${selectedUser ? 'hidden md:block' : 'block'} w-full md:w-96 flex-shrink-0 h-full`}>
+            <div className={`${selectedUser ? 'hidden md:block' : 'block'} w-full md:w-[450px] flex-shrink-0 h-full`}>
                 <ChatSidebar 
                     chats={[...groups, ...users]} 
                     onlineUsers={onlineUsers}
@@ -372,6 +372,13 @@ const Chat = () => {
                     onOpenCallHistory={() => setIsCallHistoryOpen(true)}
                     onFollowClick={handleFollowClick}
                 />
+                
+                {/* Mobile FAB (Floating Action Button) - Only visible when not in a chat */}
+                {!selectedUser && (
+                  <button className="fixed bottom-20 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-xl md:hidden">
+                    <span className="text-2xl">➕</span>
+                  </button>
+                )}
             </div>
 
             {/* Main Chat Area - Hidden on mobile if no chat is selected */}

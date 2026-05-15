@@ -1,33 +1,9 @@
-import { motion } from 'framer-motion';
+import React from 'react';
 
 const MessageBubble = ({ message, isMe }) => {
-  const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  const time = message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
 
   const renderContent = () => {
-    if (message.message_type === 'image') {
-      return (
-        <img
-          src={message.file_url || message.message_text}
-          alt="Shared" 
-          className="max-w-full rounded-3xl object-cover shadow-sm"
-          loading="lazy"
-        />
-      );
-    }
-
-    if (message.message_type === 'video') {
-      return (
-        <video 
-          src={message.file_url || message.message_text}
-          controls
-          className="max-w-full rounded-3xl shadow-sm"
-        />
-      );
-    }
-
     if (message.message_type === 'voice') {
       const audioUrl = message.file_url || message.message_text;
       const fullUrl = audioUrl?.startsWith('http') ? audioUrl : `http://127.0.0.1:8000${audioUrl}`;
@@ -41,36 +17,42 @@ const MessageBubble = ({ message, isMe }) => {
         </div>
       );
     }
+    
+    if (message.message_type === 'image') {
+      return (
+        <div className="max-w-sm overflow-hidden rounded-lg">
+          <img 
+            src={message.file_url || message.message_text} 
+            alt="Message attachment"
+            className="w-full h-auto object-cover hover:opacity-90 transition-opacity"
+          />
+        </div>
+      );
+    }
 
-    return <p className="whitespace-pre-wrap break-words text-sm leading-6">{message.message_text}</p>;
+    return <p className="leading-relaxed whitespace-pre-wrap break-words">{message.message_text || message.text}</p>;
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}
-    >
+    <div className={`flex w-full mb-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
       <div
-        className={`max-w-[75%] rounded-3xl border px-4 py-3 shadow-sm transition-all duration-300 ${
+        className={`max-w-[85%] rounded-lg px-2.5 py-1.5 shadow-sm relative ${
           isMe
-            ? 'bg-emerald-600 text-white border-emerald-700/30 rounded-br-none'
-            : 'bg-white text-slate-900 border-slate-200 rounded-bl-none'
+            ? 'bg-[#d9fdd3] text-slate-800 rounded-tr-none'
+            : 'bg-white text-slate-800 rounded-tl-none'
         }`}
       >
-        <div className="text-sm md:text-base">{renderContent()}</div>
-        <div className="mt-2 flex items-center justify-between gap-2 text-[11px] leading-none text-slate-500">
-          <span>{formatTime(message.created_at)}</span>
+        <div className="text-sm md:text-[14.5px] pr-8">{renderContent()}</div>
+        <div className={`flex items-center justify-end gap-1 mt-0.5 absolute bottom-1 right-2`}>
+          <span className="text-[10px] text-slate-500/80">{time}</span>
           {isMe && (
-            <span className="text-emerald-100">
-              {message.status === 'read' ? '✓✓' : message.status === 'delivered' ? '✓✓' : '✓'}
+            <span className={`text-[10px] ${message.is_read ? 'text-blue-500' : 'text-slate-400'}`}>
+              {message.is_read ? '✓✓' : '✓'}
             </span>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

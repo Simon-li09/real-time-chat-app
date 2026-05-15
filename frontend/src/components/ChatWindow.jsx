@@ -20,54 +20,55 @@ const ChatWindow = ({
   typingUser,
 }) => {
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-slate-950 text-white">
+    <div className="flex h-full flex-col overflow-hidden bg-[#efe7de] relative">
+      {/* WhatsApp Background Pattern (Subtle Doodle) */}
+      <div 
+        className="absolute inset-0 opacity-[0.06] pointer-events-none" 
+        style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }}
+      />
+
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-20 border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-xl px-4 py-4 shadow-sm md:px-6"
+        className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-[#f0f2f5] px-4 py-2 shadow-sm"
       >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {onBack && (
-              <button
-                onClick={onBack}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-3xl bg-slate-900/80 text-slate-200 transition hover:bg-slate-800 md:hidden"
-                aria-label="Back to chats"
-              >
-                ←
-              </button>
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-600 md:hidden"
+            >
+              ←
+            </button>
+          )}
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-300 text-base font-semibold text-white overflow-hidden">
+            {selectedUser?.profile_picture ? (
+              <img src={selectedUser.profile_picture} className="w-full h-full object-cover" />
+            ) : (
+              selectedUser?.username?.charAt(0).toUpperCase() || 'U'
             )}
-            <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-600/10 text-emerald-300 font-semibold">
-              {selectedUser?.username?.charAt(0).toUpperCase() || selectedUser?.name?.charAt(0).toUpperCase() || 'U'}
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{selectedUser?.is_group ? selectedUser.name : selectedUser?.username}</p>
-              <p className="truncate text-xs text-slate-400">
-                {typingUser ? `${typingUser} is typing...` : onlineUsersLabel(selectedUser, currentUserId)}
-              </p>
-            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={onOpenCall} className="rounded-3xl bg-slate-900/80 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800">
-              Call
-            </button>
-            <button className="hidden rounded-3xl bg-slate-900/80 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 md:inline-flex">
-              Info
-            </button>
+          <div className="min-w-0">
+            <p className="truncate text-base font-medium text-slate-900">{selectedUser?.is_group ? selectedUser.name : selectedUser?.username}</p>
+            <p className="truncate text-xs text-slate-500">
+              {typingUser ? `${typingUser} is typing...` : 'online'}
+            </p>
           </div>
         </div>
-        {wsStatus !== 'connected' && (
-          <div className="mt-3 rounded-3xl bg-amber-500/10 px-4 py-3 text-sm text-amber-100 ring-1 ring-amber-500/20">
-            Connection: <span className="font-semibold">{wsStatus}</span>
-          </div>
-        )}
+
+        <div className="flex items-center gap-5 text-slate-500 mr-2">
+          <button onClick={onOpenCall} className="text-xl">📹</button>
+          <button onClick={onOpenCall} className="text-lg">📞</button>
+          <button className="text-xl">🔍</button>
+          <button className="text-xl">⋮</button>
+        </div>
       </motion.header>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 md:px-6 md:py-6">
-        <div className="space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 md:px-10 relative z-10">
+        <div className="space-y-1 max-w-4xl mx-auto">
           {messages.length === 0 ? (
-            <div className="flex min-h-[50vh] items-center justify-center rounded-3xl border border-dashed border-slate-800 bg-slate-900/70 p-8 text-center text-sm text-slate-400">
-              Select a conversation or start a new chat to begin messaging.
+            <div className="flex min-h-[50vh] items-center justify-center p-8 text-center text-sm text-slate-500">
+              Select a conversation to start chatting.
             </div>
           ) : (
             messages.map((message, index) => {
@@ -79,13 +80,14 @@ const ChatWindow = ({
         </div>
       </div>
 
-      <footer className="sticky bottom-0 z-20 border-t border-slate-800/80 bg-slate-950/95 px-4 py-4 backdrop-blur-xl md:px-6">
-        <div className="grid gap-3">
-          {!isMutual && !selectedUser?.is_group ? (
-            <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-              You can only message mutual followers.
-            </div>
-          ) : null}
+      <footer className="sticky bottom-0 z-20 bg-[#f0f2f5] px-2 py-2 md:px-4">
+        <div className="flex items-center gap-2 max-w-5xl mx-auto">
+          {!isRecording && (
+            <>
+              <button className="p-2 text-2xl text-slate-500">😊</button>
+              <button className="p-2 text-2xl text-slate-500">📎</button>
+            </>
+          )}
 
           {isRecording ? (
             <VoiceRecorder 
@@ -93,43 +95,40 @@ const ChatWindow = ({
               onRecordingComplete={onRecordingComplete} 
             />
           ) : (
-            <div className="flex items-center gap-3 rounded-3xl border border-slate-800 bg-slate-900/90 px-3 py-3 shadow-lg shadow-slate-950/20">
-              <button
-                type="button"
-                onClick={onStartRecording}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-500 text-white transition hover:bg-emerald-400"
-              >
-                🎙️
-              </button>
+            <div className="flex-1 flex items-center gap-2 bg-white rounded-lg px-3 py-1 shadow-sm">
               <form onSubmit={onSendMessage} className="flex-1">
-                <label className="sr-only">Message</label>
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => onMessageChange(e.target.value)}
                   placeholder="Type a message"
-                  className="w-full rounded-3xl border border-slate-800 bg-slate-900 px-4 py-3 text-sm text-white outline-none ring-0 transition focus:border-emerald-500 focus:bg-slate-950"
+                  className="w-full bg-transparent py-2 text-sm text-slate-900 outline-none"
                 />
               </form>
-              <button
+            </div>
+          )}
+
+          {newMessage.trim() || isRecording ? (
+             <button
                 onClick={onSendMessage}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-500 text-white transition hover:bg-emerald-400"
+                className="inline-flex h-12 w-12 items-center justify-center text-slate-500"
                 type="button"
               >
-                ➤
+                {isRecording ? '' : '➤'}
               </button>
-            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onStartRecording}
+              className="inline-flex h-12 w-12 items-center justify-center text-slate-500 text-2xl"
+            >
+              🎙️
+            </button>
           )}
         </div>
       </footer>
     </div>
   );
-};
-
-const onlineUsersLabel = (selectedUser, currentUserId) => {
-  if (!selectedUser) return 'No conversation selected';
-  if (selectedUser.is_group) return 'Group chat';
-  return 'Active now';
 };
 
 export default ChatWindow;

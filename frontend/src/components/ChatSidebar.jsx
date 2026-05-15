@@ -18,6 +18,7 @@ const ChatSidebar = ({
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
+  const [activeFilter, setActiveFilter] = useState('All');
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -52,71 +53,72 @@ const ChatSidebar = ({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -320, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          className="fixed inset-y-0 left-0 z-40 w-full max-w-sm border-r border-slate-200 bg-white/95 backdrop-blur-xl shadow-2xl md:static md:translate-x-0 md:w-[400px] lg:w-[450px] md:max-w-none md:shadow-none"
+          className="fixed inset-y-0 left-0 z-40 flex w-full max-w-sm border-r border-slate-200 bg-[#f0f2f5] md:static md:translate-x-0 md:w-[450px] md:max-w-none md:shadow-none"
         >
-          <div className="flex h-full flex-col overflow-hidden">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4 bg-white/90 backdrop-blur">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-600">Chats</p>
-                <h2 className="text-xl font-semibold text-slate-900">Conversations</h2>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={onOpenStatus}
-                  className="rounded-2xl bg-slate-100 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-200"
-                >Status</button>
-                <button
-                  onClick={onOpenSettings}
-                  className="hidden rounded-2xl bg-slate-100 px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-200 md:inline-flex"
-                >Settings</button>
-                <button
-                  onClick={onClose}
-                  className="rounded-full bg-slate-100 p-2 text-slate-700 transition hover:bg-slate-200 md:hidden"
-                  aria-label="Close sidebar"
-                >✕</button>
+          {/* WhatsApp Vertical Icon Bar (Desktop Only) */}
+          <div className="hidden w-16 flex-col items-center border-r border-slate-200 bg-[#eae6df] py-4 md:flex">
+            <div className="flex flex-col gap-6 text-slate-600">
+              <button className="text-xl">💬</button>
+              <button className="text-xl">⭕</button>
+              <button className="text-xl">👥</button>
+              <button className="text-xl">⚙️</button>
+            </div>
+            <button className="mt-auto text-xl" onClick={onOpenSettings}>👤</button>
+          </div>
+
+          <div className="flex flex-1 flex-col overflow-hidden bg-white">
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between px-4 py-3">
+              <h2 className="text-xl font-bold text-slate-800">Chats</h2>
+              <div className="flex items-center gap-4 text-slate-500">
+                <button className="text-lg">➕</button>
+                <button className="text-lg">⋮</button>
               </div>
             </div>
 
-            <div className="p-4">
-              <div className="relative">
+            {/* Search and Filters */}
+            <div className="px-3 py-2">
+              <div className="relative mb-3">
                 <input
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search chats or users"
-                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                  placeholder="Search or start new chat"
+                  className="w-full rounded-lg bg-[#f0f2f5] px-10 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-500"
                 />
-                {isSearching && (
-                  <div className="absolute inset-y-0 right-4 flex items-center text-emerald-600">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
-                  </div>
-                )}
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
               </div>
-              {searchError && <p className="mt-2 text-xs text-red-500">{searchError}</p>}
+              
+              <div className="flex gap-2 pb-1 overflow-x-auto">
+                {['All', 'Unread', 'Favorites', 'Groups'].map(filter => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition ${
+                      activeFilter === filter ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-4 pb-24 md:pb-6">
-              <div className="mb-4 rounded-3xl bg-emerald-50 px-4 py-3 text-sm text-slate-700 shadow-sm">
-                <p className="font-semibold">Quick actions</p>
-                <p className="mt-1 text-xs text-slate-500">Tap a conversation to start chatting.</p>
-              </div>
-
+            <div className="flex-1 overflow-y-auto">
               {results.length === 0 ? (
-                <div className="rounded-3xl bg-slate-50 px-4 py-10 text-center text-sm text-slate-500 shadow-sm">
-                  No chats found. Try another search.
+                <div className="px-4 py-10 text-center text-sm text-slate-400">
+                  No chats found.
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="divide-y divide-slate-100">
                   {results.map((chat) => {
                     const id = chat.id;
                     const name = chat.is_group ? chat.name : chat.username;
                     
-                    // Improved last message preview logic
                     let lastMessage = 'Tap to start chatting';
                     if (chat.last_message) {
                       if (chat.last_message.message_type === 'voice') lastMessage = '🎤 Voice Note';
-                      else if (chat.last_message.message_type === 'image') lastMessage = '📷 Image';
-                      else if (chat.last_message.message_type === 'video') lastMessage = '🎥 Video';
+                      else if (chat.last_message.message_type === 'image') lastMessage = '📷 Photo';
                       else lastMessage = chat.last_message.message_text || chat.last_message.text || lastMessage;
                     }
 
@@ -129,54 +131,26 @@ const ChatSidebar = ({
                       <div
                         key={`chat-${id}`}
                         onClick={() => onSelectUser(chat)}
-                        className={`group flex w-full cursor-pointer items-start gap-3 rounded-3xl px-4 py-3 text-left transition ${
-                          isSelected ? 'bg-emerald-50 shadow-sm' : 'hover:bg-slate-50'
+                        className={`group flex w-full cursor-pointer items-center gap-3 px-3 py-3 transition ${
+                          isSelected ? 'bg-[#f0f2f5]' : 'hover:bg-[#f5f6f6]'
                         }`}
                       >
-                        <div className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-3xl bg-emerald-100 text-xl font-bold text-emerald-700">
-                          {name?.charAt(0).toUpperCase()}
-                          {isOnline && <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-500" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-3">
-                            <h3 className="truncate text-sm font-semibold text-slate-900">{name}</h3>
-                            {time && <span className="text-[11px] text-slate-400">{time}</span>}
+                        <div className="relative h-12 w-12 flex-shrink-0">
+                          <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-lg font-bold text-slate-400">
+                            {name?.charAt(0).toUpperCase()}
                           </div>
-                          
-                          {chat.is_followed_by && !chat.is_following && !chat.is_group ? (
-                            <div className="mt-1 flex items-center justify-between gap-2">
-                              <p className="truncate text-sm text-emerald-600">{name} followed you</p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onFollowClick && onFollowClick(chat.id);
-                                }}
-                                className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-emerald-700 shadow-sm"
-                              >
-                                Follow back
-                              </button>
-                            </div>
-                          ) : !chat.is_followed_by && !chat.is_following && !chat.is_group ? (
-                            <div className="mt-1 flex items-center justify-between gap-2">
-                              <p className="truncate text-sm text-slate-500">{lastMessage}</p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onFollowClick && onFollowClick(chat.id);
-                                }}
-                                className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-emerald-700 shadow-sm"
-                              >
-                                Follow
-                              </button>
-                            </div>
-                          ) : (
-                            <p className="mt-1 truncate text-sm text-slate-500">{lastMessage}</p>
-                          )}
-                          <div className="mt-3 flex items-center justify-between gap-3">
-                            <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{chat.is_group ? 'Group' : 'Direct'}</span>
+                          {isOnline && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />}
+                        </div>
+                        <div className="flex-1 min-w-0 border-b border-slate-100 pb-2 group-last:border-none">
+                          <div className="flex items-center justify-between">
+                            <h3 className="truncate text-base font-normal text-slate-900">{name}</h3>
+                            <span className={`text-[11px] ${unread > 0 ? 'text-emerald-500 font-semibold' : 'text-slate-500'}`}>{time}</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-2 mt-0.5">
+                            <p className="truncate text-sm text-slate-500 flex-1">{lastMessage}</p>
                             {unread > 0 && (
-                              <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-emerald-600 px-2 text-[11px] font-semibold text-white">
-                                {unread > 9 ? '9+' : unread}
+                              <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-emerald-500 px-1.5 text-[10px] font-bold text-white">
+                                {unread}
                               </span>
                             )}
                           </div>
@@ -188,11 +162,25 @@ const ChatSidebar = ({
               )}
             </div>
 
-            <div className="sticky bottom-0 border-t border-slate-200 bg-white/90 px-4 py-4 backdrop-blur md:hidden">
-              <div className="grid grid-cols-3 gap-2">
-                <button onClick={onOpenStatus} className="rounded-3xl bg-slate-100 px-3 py-3 text-sm font-semibold text-slate-700">Status</button>
-                <button onClick={onOpenCallHistory} className="rounded-3xl bg-slate-100 px-3 py-3 text-sm font-semibold text-slate-700">Calls</button>
-                <button onClick={onOpenSettings} className="rounded-3xl bg-slate-100 px-3 py-3 text-sm font-semibold text-slate-700">Settings</button>
+            {/* Mobile Bottom Navigation (only when sidebar is open on mobile) */}
+            <div className="sticky bottom-0 border-t border-slate-200 bg-white px-4 py-3 md:hidden">
+              <div className="grid grid-cols-4 gap-2 text-center text-xs text-slate-500">
+                <button className="flex flex-col items-center gap-1 text-emerald-600 font-bold">
+                  <span className="text-xl">💬</span>
+                  <span>Chats</span>
+                </button>
+                <button className="flex flex-col items-center gap-1">
+                  <span className="text-xl">📞</span>
+                  <span>Calls</span>
+                </button>
+                <button className="flex flex-col items-center gap-1">
+                  <span className="text-xl">⭕</span>
+                  <span>Updates</span>
+                </button>
+                <button className="flex flex-col items-center gap-1">
+                  <span className="text-xl">🛠️</span>
+                  <span>Tools</span>
+                </button>
               </div>
             </div>
           </div>
