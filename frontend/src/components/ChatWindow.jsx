@@ -47,11 +47,11 @@ const ChatWindow = ({
               </p>
             </div>
           </div>
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="flex items-center gap-2">
             <button onClick={onOpenCall} className="rounded-3xl bg-slate-900/80 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800">
               Call
             </button>
-            <button className="rounded-3xl bg-slate-900/80 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800">
+            <button className="hidden rounded-3xl bg-slate-900/80 px-3 py-2 text-sm text-slate-200 transition hover:bg-slate-800 md:inline-flex">
               Info
             </button>
           </div>

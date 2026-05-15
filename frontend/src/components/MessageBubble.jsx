@@ -29,10 +29,12 @@ const MessageBubble = ({ message, isMe }) => {
     }
 
     if (message.message_type === 'voice') {
+      const audioUrl = message.file_url || message.message_text;
+      const fullUrl = audioUrl?.startsWith('http') ? audioUrl : `http://127.0.0.1:8000${audioUrl}`;
       return (
         <div className="rounded-3xl bg-slate-900/10 p-3">
           <audio 
-            src={message.file_url || message.message_text}
+            src={fullUrl}
             controls
             className="w-full"
           />
