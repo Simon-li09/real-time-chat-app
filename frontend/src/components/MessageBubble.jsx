@@ -2,6 +2,7 @@ import React from 'react';
 
 const MessageBubble = ({ message, isMe }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [duration, setDuration] = React.useState(0);
   const audioRef = React.useRef(null);
   const time = message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
 
@@ -10,9 +11,16 @@ const MessageBubble = ({ message, isMe }) => {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play().catch(e => console.error("Audio play failed:", e));
     }
     setIsPlaying(!isPlaying);
+  };
+
+  const formatDuration = (seconds) => {
+    if (!seconds || isNaN(seconds)) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const renderContent = () => {
@@ -50,7 +58,7 @@ const MessageBubble = ({ message, isMe }) => {
                 />
               ))}
             </div>
-            <div className="text-[10px] text-slate-500">0:27</div>
+            <div className="text-[10px] text-slate-500">{formatDuration(duration)}</div>
           </div>
 
           {!isMe && (
@@ -70,6 +78,7 @@ const MessageBubble = ({ message, isMe }) => {
             ref={audioRef}
             src={fullUrl} 
             className="hidden" 
+            onLoadedMetadata={() => setDuration(audioRef.current.duration)}
             onEnded={() => setIsPlaying(false)}
           />
         </div>
