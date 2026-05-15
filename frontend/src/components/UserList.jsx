@@ -42,18 +42,7 @@ const UserList = ({ users, onlineUsers, onSelectUser, selectedUserId, onFollowTo
         }
     };
 
-    const handleFollowClick = async (userId) => {
-        try {
-            await userService.followUser(userId);
-            if (onFollowToggle) onFollowToggle();
-            // Optional: don't clear results, just let the followed list refresh
-            // But let's clear found user to give visual feedback that search is "done"
-            setSearchResults(prev => prev.filter(u => u.id !== userId));
-            if (searchResults.length <= 1) setSearchQuery('');
-        } catch (err) {
-            console.error('Failed to follow user');
-        }
-    };
+
 
     const filteredChats = users.filter(u => {
         const name = u.username || u.name || '';
@@ -107,24 +96,26 @@ const UserList = ({ users, onlineUsers, onSelectUser, selectedUserId, onFollowTo
                         <h3 className="text-xs font-semibold text-emerald-500 uppercase tracking-wider mb-2 px-6">Global Results</h3>
                         <div className="divide-y divide-slate-50">
                             {searchResults.map(result => (
-                                <div key={result.id} className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50">
+                                <div
+                                    key={result.id}
+                                    onClick={() => onSelectUser(result)}
+                                    className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50 cursor-pointer"
+                                >
                                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 font-bold text-emerald-600 flex-shrink-0">
                                         {result.username.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-bold capitalize text-gray-900">{result.username}</h3>
                                     </div>
-                                    <button
-                                        onClick={() => handleFollowClick(result.id)}
-                                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold uppercase tracking-wider rounded-full transition-all"
-                                    >
-                                        Follow
-                                    </button>
+                                    <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
+                                        Chat
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
+
 
                 {filteredChats.length === 0 && searchResults.length === 0 ? (
                     <div className="p-10 flex flex-col items-center justify-center text-center opacity-50">
@@ -171,32 +162,21 @@ const UserList = ({ users, onlineUsers, onSelectUser, selectedUserId, onFollowTo
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <p className="text-sm text-gray-500 truncate pr-2 flex-1">
-                                                {user.is_followed_by && !user.is_following ? (
-                                                    <span className="text-emerald-600">Follows you</span>
-                                                ) : user.last_message ? (
+                                                {user.last_message ? (
                                                     user.last_message.text
                                                 ) : (
                                                     'Tap to chat'
                                                 )}
                                             </p>
-                                            
-                                            {user.is_followed_by && !user.is_following && (
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleFollowClick(user.id);
-                                                    }}
-                                                    className="px-3 py-1 bg-emerald-600 text-white text-[10px] font-bold uppercase rounded-full hover:bg-emerald-700 transition-all flex-shrink-0"
-                                                >
-                                                    Follow Back
-                                                </button>
-                                            )}
 
-                                            {user.unread_count > 0 && !(!user.is_following && user.is_followed_by) && (
+
+                                            {user.unread_count > 0 && (
                                                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] text-white flex-shrink-0">
                                                     {user.unread_count}
                                                 </span>
                                             )}
+
+
                                         </div>
                                     </div>
                                 </div>

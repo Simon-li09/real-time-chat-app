@@ -171,7 +171,7 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
                 <h2 className="mt-6 text-3xl font-medium tracking-tight">{caller.username}</h2>
                 <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    WhatsApp Call
+                    lee call
                 </div>
             </div>
 

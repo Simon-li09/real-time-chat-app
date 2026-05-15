@@ -1,4 +1,7 @@
-- [ ] Add websocket `message_read` send from frontend (so message indicators update)
-- [ ] Harden CallModal Accept flow (only accept when remote offer applied; log rtc_signal types)
-- [ ] Test: incoming call can be accepted and message indicators update
+# TODO
+
+- [ ] Remove follow-gating UI in direct chat user search/list so users can start messaging freely by username search.
+- [ ] Ensure direct message send path does not enforce follow/mutual-follow checks (backend already says removed; verify no REST endpoint adds restriction).
+- [ ] Add/confirm “search by username to message” flow in UI (ChatSidebar already searches; may need to ensure it shows results and allows selection).
+- [ ] Run quick sanity checks: build/lint and basic message flow.
 
