@@ -275,17 +275,25 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Using partial data directly to avoid circular dependency with views/serializers
             # or we could move MessageSerializer to a dedicated file.
             # For robustness, let's just construct the return payload clearly.
+            sender_payload = {
+                'id': int(sender_id),
+                'username': sender.username,
+                'profile_picture': getattr(sender, 'profile_picture', None),
+                'name': getattr(sender, 'name', None),
+            }
+
             return {
                 'id': msg.id,
+                'sender': sender_payload,
                 'sender_id': int(sender_id),
                 'receiver_id': int(receiver_id) if receiver_id else None,
                 'group_id': int(group_id) if group_id else None,
-                'message_type': msg_type,
+                'message_type': msg_type or 'text',
                 'message_text': content,
                 'file_url': file_url,
                 'sender_name': sender.username,
                 'created_at': msg.created_at.isoformat(),
-                'status': msg.status
+                'status': msg.status,
             }
         except Exception as e:
             print(f"ERROR saving message: {e}")

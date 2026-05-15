@@ -40,10 +40,11 @@ class CallLogSerializer(serializers.ModelSerializer):
     caller = UserSerializer(source='other_user', read_only=True)
     type = serializers.ReadOnlyField(source='call_type')
     other_user_id = serializers.IntegerField(write_only=True)
+    timestamp = serializers.DateTimeField(source='created_at', read_only=True)
 
     class Meta:
         model = CallLog
-        fields = ('id', 'caller', 'direction', 'status', 'type', 'created_at', 'other_user_id')
+        fields = ('id', 'caller', 'direction', 'status', 'type', 'created_at', 'timestamp', 'other_user_id')
 
     def create(self, validated_data):
         other_user_id = validated_data.pop('other_user_id')
