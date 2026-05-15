@@ -22,9 +22,7 @@ const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     
-    // Check if current selection is a mutual follow (for 1-to-1 chats)
-    const isMutual = selectedUser && 
-        (selectedUser.is_following && selectedUser.is_followed_by);
+    const [typingUser, setTypingUser] = useState(null);
 
     const navigate = useNavigate();
     const [user, setUser] = useState(() => {
@@ -221,31 +219,12 @@ const Chat = () => {
         }
     }, [selectedUser]);
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
     const fetchUsers = async () => {
         try {
-            // Fetch only users the current user follows
-            const response = await userService.getFollowedUsers();
+            const response = await userService.getUsers();
             setUsers(response.data);
         } catch (err) {
             console.error('Failed to fetch users');
-        }
-    };
-
-    const handleFollowClick = async (userId) => {
-        try {
-            await userService.followUser(userId);
-            // Re-fetch users to update the UI
-            await fetchUsers();
-            // Also update any search results if applicable
-            if (selectedUser && selectedUser.id === userId) {
-                setSelectedUser(prev => ({ ...prev, is_following: true }));
-            }
-        } catch (err) {
-            console.error('Failed to follow user', err);
         }
     };
 
@@ -366,10 +345,10 @@ const Chat = () => {
                     onSelectUser={setSelectedUser}
                     isOpen={!selectedUser}
                     onClose={() => setSelectedUser(null)}
-                    onOpenStatus={() => setActiveStatuses(true)} // Or handle specific status modal
+                    onOpenStatus={() => setActiveStatuses(true)}
                     onOpenSettings={() => setIsSettingsOpen(true)}
                     onOpenCallHistory={() => setIsCallHistoryOpen(true)}
-                    />
+                />
             </div>
 
             {/* Main Chat Area - Hidden on mobile if no chat is selected */}

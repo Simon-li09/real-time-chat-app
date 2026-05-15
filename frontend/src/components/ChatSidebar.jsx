@@ -12,7 +12,6 @@ const ChatSidebar = ({
   onOpenStatus,
   onOpenSettings,
   onOpenCallHistory,
-  onFollowClick,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -131,7 +130,10 @@ const ChatSidebar = ({
                     return (
                       <div
                         key={`chat-${id}`}
-                        onClick={() => onSelectUser(chat)}
+                        onClick={() => {
+                          onSelectUser(chat);
+                          setSearchQuery('');
+                        }}
                         className={`group flex w-full cursor-pointer items-center gap-3 px-3 py-3 transition ${
                           isSelected ? 'bg-[#f0f2f5]' : 'hover:bg-[#f5f6f6]'
                         }`}
