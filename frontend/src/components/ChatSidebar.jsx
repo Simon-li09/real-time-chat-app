@@ -110,7 +110,16 @@ const ChatSidebar = ({
                   {results.map((chat) => {
                     const id = chat.id;
                     const name = chat.is_group ? chat.name : chat.username;
-                    const lastMessage = chat.last_message?.message_text || chat.last_message?.text || 'Tap to start chatting';
+                    
+                    // Improved last message preview logic
+                    let lastMessage = 'Tap to start chatting';
+                    if (chat.last_message) {
+                      if (chat.last_message.message_type === 'voice') lastMessage = '🎤 Voice Note';
+                      else if (chat.last_message.message_type === 'image') lastMessage = '📷 Image';
+                      else if (chat.last_message.message_type === 'video') lastMessage = '🎥 Video';
+                      else lastMessage = chat.last_message.message_text || chat.last_message.text || lastMessage;
+                    }
+
                     const time = chat.last_message?.created_at ? new Date(chat.last_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
                     const unread = chat.unread_count || 0;
                     const isSelected = String(selectedUserId) === String(id);
