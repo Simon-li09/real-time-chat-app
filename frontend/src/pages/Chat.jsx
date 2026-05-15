@@ -366,7 +366,6 @@ const Chat = () => {
                             addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'audio' });
                             setActiveCall({ caller: selectedUser, isIncoming: false });
                         }}
-                        isMutual={isMutual}
                         typingUser={typingUser}
                     />
                 ) : (

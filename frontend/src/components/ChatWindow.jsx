@@ -11,7 +11,6 @@ const ChatWindow = ({
   onSendMessage,
   onBack,
   onOpenCall,
-  isMutual,
   typingUser,
 }) => {
   return (
