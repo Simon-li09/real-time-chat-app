@@ -370,15 +370,7 @@ const Chat = () => {
                     onOpenStatus={() => setActiveStatuses(true)} // Or handle specific status modal
                     onOpenSettings={() => setIsSettingsOpen(true)}
                     onOpenCallHistory={() => setIsCallHistoryOpen(true)}
-                    onFollowClick={handleFollowClick}
-                />
-                
-                {/* Mobile FAB (Floating Action Button) - Only visible when not in a chat */}
-                {!selectedUser && (
-                  <button className="fixed bottom-20 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-xl md:hidden">
-                    <span className="text-2xl">➕</span>
-                  </button>
-                )}
+                    />
             </div>
 
             {/* Main Chat Area - Hidden on mobile if no chat is selected */}

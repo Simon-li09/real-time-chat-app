@@ -162,24 +162,33 @@ const ChatSidebar = ({
               )}
             </div>
 
-            {/* Mobile Bottom Navigation (only when sidebar is open on mobile) */}
+            {/* Mobile Bottom Navigation */}
             <div className="sticky bottom-0 border-t border-slate-200 bg-white px-4 py-3 md:hidden">
               <div className="grid grid-cols-4 gap-2 text-center text-xs text-slate-500">
                 <button className="flex flex-col items-center gap-1 text-emerald-600 font-bold">
                   <span className="text-xl">💬</span>
                   <span>Chats</span>
                 </button>
-                <button className="flex flex-col items-center gap-1">
+                <button 
+                  onClick={onOpenCallHistory}
+                  className="flex flex-col items-center gap-1 hover:text-emerald-600 transition"
+                >
                   <span className="text-xl">📞</span>
                   <span>Calls</span>
                 </button>
-                <button className="flex flex-col items-center gap-1">
+                <button 
+                  onClick={onOpenStatus}
+                  className="flex flex-col items-center gap-1 hover:text-emerald-600 transition"
+                >
                   <span className="text-xl">⭕</span>
-                  <span>Updates</span>
+                  <span>Status</span>
                 </button>
-                <button className="flex flex-col items-center gap-1">
-                  <span className="text-xl">🛠️</span>
-                  <span>Tools</span>
+                <button 
+                  onClick={onOpenSettings}
+                  className="flex flex-col items-center gap-1 hover:text-emerald-600 transition"
+                >
+                  <span className="text-xl">⚙️</span>
+                  <span>Settings</span>
                 </button>
               </div>
             </div>
