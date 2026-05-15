@@ -81,6 +81,8 @@ const ChatSidebar = ({
             <div className="px-3 py-2">
               <div className="relative mb-3">
                 <input
+                  id="search-input"
+                  name="search"
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

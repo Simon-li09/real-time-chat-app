@@ -79,6 +79,8 @@ const ChatWindow = ({
           <div className="flex-1 flex items-center gap-2 bg-white rounded-lg px-3 py-1 shadow-sm">
             <form onSubmit={onSendMessage} className="flex-1">
               <input
+                id="message-input"
+                name="message"
                 type="text"
                 value={newMessage}
                 onChange={(e) => onMessageChange(e.target.value)}

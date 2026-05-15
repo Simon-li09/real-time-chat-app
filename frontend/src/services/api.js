@@ -5,6 +5,8 @@ const API = axios.create({
     timeout: 10000,
 });
 
+export const MEDIA_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/").split('/api/')[0];
+
 API.interceptors.request.use(
     (config) => {
         config.headers = config.headers || {};
