@@ -20,10 +20,10 @@ const ChatWindow = ({
   typingUser,
 }) => {
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#efe7de] relative">
+    <div className="flex h-full flex-col overflow-hidden bg-[#e5ddd5] relative">
       {/* WhatsApp Background Pattern (Subtle Doodle) */}
       <div 
-        className="absolute inset-0 opacity-[0.06] pointer-events-none" 
+        className="absolute inset-0 opacity-[0.4] pointer-events-none mix-blend-overlay" 
         style={{ backgroundImage: 'url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")' }}
       />
 

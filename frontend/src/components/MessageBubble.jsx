@@ -7,13 +7,51 @@ const MessageBubble = ({ message, isMe }) => {
     if (message.message_type === 'voice') {
       const audioUrl = message.file_url || message.message_text;
       const fullUrl = audioUrl?.startsWith('http') ? audioUrl : `http://127.0.0.1:8000${audioUrl}`;
+      
       return (
-        <div className="min-w-[220px] max-w-full py-1">
-          <audio 
-            src={fullUrl}
-            controls
-            className="w-full h-8 opacity-90 brightness-110 accent-emerald-500"
-          />
+        <div className="flex items-center gap-2 min-w-[240px] py-1">
+          {/* Profile Circle inside the bubble */}
+          {isMe && (
+            <div className="relative h-10 w-10 flex-shrink-0">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-800/20 text-sm font-bold">
+                {message.sender?.username?.charAt(0).toUpperCase() || 'E'}
+              </div>
+              <span className="absolute -bottom-1 -right-1 text-[10px]">🎙️</span>
+            </div>
+          )}
+
+          <button className="flex h-10 w-10 items-center justify-center text-2xl text-slate-600 transition hover:scale-110">
+            ▶️
+          </button>
+
+          <div className="flex-1 flex flex-col gap-1">
+            {/* Waveform Visualization (Simulated) */}
+            <div className="flex items-end gap-[2px] h-6 px-1">
+              {[30, 60, 40, 80, 50, 70, 40, 90, 60, 30, 50, 80, 40, 60, 30, 70, 50, 40].map((h, i) => (
+                <div 
+                  key={i} 
+                  className={`w-[2px] rounded-full ${i < 5 ? 'bg-slate-500' : 'bg-slate-300'}`} 
+                  style={{ height: `${h}%` }} 
+                />
+              ))}
+            </div>
+            <div className="text-[10px] text-slate-500">0:27</div>
+          </div>
+
+          {!isMe && (
+            <div className="relative h-10 w-10 flex-shrink-0">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-800/20 text-sm font-bold overflow-hidden">
+                {message.sender?.profile_picture ? (
+                  <img src={message.sender.profile_picture} className="w-full h-full object-cover" />
+                ) : (
+                  message.sender?.username?.charAt(0).toUpperCase() || 'P'
+                )}
+              </div>
+              <span className="absolute -bottom-1 -right-1 text-[10px]">🎙️</span>
+            </div>
+          )}
+          
+          <audio src={fullUrl} className="hidden" />
         </div>
       );
     }
