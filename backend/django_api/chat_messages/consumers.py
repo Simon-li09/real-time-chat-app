@@ -82,18 +82,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send_error("Message content cannot be empty")
             return
 
-        # Saving and Broadcasting
+        # Save and Broadcast
         if not receiver_id and not group_id:
             await self.send_error("Missing recipient: specify receiver_id or group_id")
             return
-        elif group_id:
+
+        # Removed mutual-follow restrictions for direct messages.
+        # Group messaging remains restricted to group members.
+        if group_id:
             members = await self.get_group_members(group_id)
             if int(self.user_id) not in members:
-                await self.send_error("Messaging restricted: You are not a member of this group", code="RESTRICTED_GROUP")
+                await self.send_error(
+                    "Messaging restricted: You are not a member of this group",
+                    code="RESTRICTED_GROUP",
+                )
                 return
-        else:
-            await self.send_error("Missing recipient: specify receiver_id or group_id")
-            return
+
 
         # Save and Broadcast
         print(f"--- SAVING MESSAGE: sender={self.user_id} receiver={receiver_id} group={group_id} ---")
@@ -154,9 +158,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'relay_status',
                 'message_id': message_id,
-                'status': 'read'
-            }
+                'status': 'read',
+            },
         )
+
 
     async def handle_rtc_signal(self, data):
         receiver_id = data.get('to')
@@ -167,9 +172,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'relay_rtc',
                 'from': self.user_id,
-                'signal': data.get('signal')
-            }
+                'signal': data.get('signal'),
+            },
         )
+
 
     # Relay Handlers (Group/Room distribution)
     async def relay_message(self, event):
