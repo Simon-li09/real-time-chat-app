@@ -152,8 +152,9 @@ const Chat = () => {
             }));
 
             cleanups.push(socketService.on('error', (data) => {
-                console.error('❌ SOCKET ERROR:', data);
-                alert(data.message || 'An error occurred');
+                console.error('❌ SOCKET ERROR DETAILS:', JSON.stringify(data, null, 2));
+                const errMsg = data.message || (typeof data === 'string' ? data : 'An unexpected server error occurred');
+                alert(`Chat Error: ${errMsg}`);
             }));
 
             cleanups.push(socketService.on('typing_status', (data) => {
