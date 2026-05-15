@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { MEDIA_URL } from '../services/api';
 import MessageBubble from './MessageBubble';
 
 const ChatWindow = ({
@@ -37,7 +38,7 @@ const ChatWindow = ({
           )}
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-300 text-base font-semibold text-white overflow-hidden">
             {selectedUser?.profile_picture ? (
-              <img src={selectedUser.profile_picture} className="w-full h-full object-cover" />
+              <img src={selectedUser.profile_picture.startsWith('http') ? selectedUser.profile_picture : `${MEDIA_URL}${selectedUser.profile_picture}`} className="w-full h-full object-cover" />
             ) : (
               selectedUser?.username?.charAt(0).toUpperCase() || 'U'
             )}

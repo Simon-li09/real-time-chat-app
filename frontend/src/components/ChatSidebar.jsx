@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { userService } from '../services/api';
+import { userService, MEDIA_URL } from '../services/api';
 
 const ChatSidebar = ({
   chats,
@@ -137,8 +137,12 @@ const ChatSidebar = ({
                         }`}
                       >
                         <div className="relative h-12 w-12 flex-shrink-0">
-                          <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-lg font-bold text-slate-400">
-                            {name?.charAt(0).toUpperCase()}
+                          <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-lg font-bold text-slate-400 overflow-hidden">
+                            {chat.profile_picture ? (
+                                <img src={chat.profile_picture.startsWith('http') ? chat.profile_picture : `${MEDIA_URL}${chat.profile_picture}`} className="w-full h-full object-cover" />
+                            ) : (
+                                name?.charAt(0).toUpperCase()
+                            )}
                           </div>
                           {isOnline && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />}
                         </div>

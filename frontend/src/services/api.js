@@ -5,7 +5,9 @@ const API = axios.create({
     timeout: 10000,
 });
 
-export const MEDIA_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/").split('/api/')[0];
+export const MEDIA_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api/")
+    .split('/api/')[0]
+    .replace('http://real-time-back.onrender.com', 'https://real-time-back.onrender.com');
 
 API.interceptors.request.use(
     (config) => {
