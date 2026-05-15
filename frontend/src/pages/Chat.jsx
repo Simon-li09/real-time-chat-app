@@ -2,15 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userService, messageService } from '../services/api';
 import socketService from '../sockets/socket';
-import UserList from '../components/UserList';
-import ChatBox from '../components/ChatBox';
+import UserList from '../components/UserList'; // Kept for reference, though unused
+import ChatBox from '../components/ChatBox'; // Kept for reference
 import SettingsModal from '../components/SettingsModal';
 import CreateGroupModal from '../components/CreateGroupModal';
-import VoiceRecorder from '../components/VoiceRecorder';
 import StatusTray from '../components/StatusTray';
 import StatusViewer from '../components/StatusViewer';
 import CallLog from '../components/CallLog';
 import CallModal from '../components/CallModal';
+import ChatSidebar from '../components/ChatSidebar';
+import ChatWindow from '../components/ChatWindow';
+import MobileNavbar from '../components/MobileNavbar';
 
 const Chat = () => {
     const [users, setUsers] = useState([]);
@@ -341,183 +343,62 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex h-screen w-full bg-white text-slate-800 antialiased relative overflow-hidden">
-            <div className={`${selectedUser ? 'hidden md:flex' : 'flex'} w-full md:w-96 flex-col border-r border-gray-100`}>
-                <div className="flex-1 overflow-y-hidden h-full relative">
-                    <UserList 
-                        users={[...groups, ...users]} 
-                        selectedUser={selectedUser} 
-                        onSelectUser={setSelectedUser}
-                        onlineUsers={onlineUsers}
-                        typingUser={typingUser}
-                        onFollowToggle={() => {
-                            fetchUsers();
-                            loadGroups();
-                        }}
-                    />
-                    <StatusTray onSelectStatus={setActiveStatuses} />
-                    <CallLog logs={callLog} />
-                </div>
+        <div className="flex h-[100dvh] w-full bg-slate-950 text-slate-200 antialiased relative overflow-hidden">
+            {/* Sidebar - Hidden on mobile if a chat is selected */}
+            <div className={`${selectedUser ? 'hidden md:block' : 'block'} w-full md:w-96 flex-shrink-0 h-full`}>
+                <ChatSidebar 
+                    chats={[...groups, ...users]} 
+                    onlineUsers={onlineUsers}
+                    selectedUserId={selectedUser?.id}
+                    onSelectUser={setSelectedUser}
+                    isOpen={!selectedUser}
+                    onClose={() => setSelectedUser(null)}
+                    onOpenStatus={() => setActiveStatuses(true)} // Or handle specific status modal
+                    onOpenSettings={() => setIsSettingsOpen(true)}
+                    onOpenCallHistory={() => setIsCallHistoryOpen(true)}
+                />
             </div>
 
-            <main className={`${!selectedUser ? 'hidden md:flex' : 'flex'} flex-1 flex-col bg-[#F8F9FA] relative w-full h-full`}>
+            {/* Main Chat Area - Hidden on mobile if no chat is selected */}
+            <main className={`${!selectedUser ? 'hidden md:flex' : 'flex'} flex-1 flex-col relative w-full h-full`}>
                 {selectedUser ? (
-                    <>
-                        <header className="flex items-center justify-between bg-white px-6 py-3 shadow-sm z-10">
-                            <div className="flex items-center gap-3">
-                                <button 
-                                    onClick={() => setSelectedUser(null)}
-                                    className="md:hidden mr-2 p-1 text-emerald-600 hover:bg-emerald-50 rounded-full"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                                    </svg>
-                                </button>
-                                {selectedUser.profile_picture ? (
-                                    <img src={selectedUser.profile_picture} alt={selectedUser.username} className="flex h-10 w-10 items-center justify-center rounded-full object-cover" />
-                                ) : (
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 font-bold text-emerald-700">
-                                        {selectedUser.username.charAt(0).toUpperCase()}
-                                    </div>
-                                )}
-                                <div>
-                                    <h3 className="text-sm font-bold capitalize">{selectedUser.is_group ? selectedUser.name : selectedUser.username}</h3>
-                                    <div className="flex items-center gap-1.5 text-[10px] text-emerald-500">
-                                        {onlineUsers.includes(selectedUser.id.toString()) ? (
-                                            <><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Online</>
-                                        ) : (
-                                            <span className="text-gray-400">Offline</span>
-                                        )}
-                                        {typingUser && <span className="text-emerald-500 italic ml-1">• typing...</span>}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            {!selectedUser.is_group && (
-                                <div className="flex gap-5 text-emerald-600 items-center">
-                                    <button 
-                                        className="hover:opacity-70 text-lg"
-                                        onClick={() => {
-                                            addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'audio' });
-                                            setActiveCall({ caller: selectedUser, isIncoming: false });
-                                        }}
-                                        title="Voice Call"
-                                    >📞</button>
-                                    <button className="hover:opacity-70 font-bold text-lg" title="Code">&lt;/&gt;</button>
-                                    <button className="hover:opacity-70 text-2xl" title="More options">⋮</button>
-                                </div>
-                            )}
-                        </header>
-
-                        {wsStatus !== 'connected' && (
-                            <div className="px-6 py-2 bg-amber-50 text-amber-700 border-b border-amber-100 text-xs text-center font-medium shadow-sm">
-                                Chat connection status: <strong>{wsStatus}</strong>
-                            </div>
-                        )}
-
-                        <div className="flex-1 overflow-y-auto p-4 md:p-6 relative">
-                            <ChatBox messages={messages} currentUserId={user.id} />
-                            <div ref={messagesEndRef} />
-                        </div>
-
-                        <footer className="flex items-center gap-4 bg-white px-4 py-3 md:px-6 md:py-4 shadow-[0_-1px_10px_rgba(0,0,0,0.02)] z-10 pb-safe">
-                            <label className="text-xl text-gray-400 hover:text-gray-600 cursor-pointer p-1">
-                                📎
-                                <input 
-                                    type="file" 
-                                    className="hidden" 
-                                    onChange={async (e) => {
-                                        const file = e.target.files[0];
-                                        if (!file) return;
-                                        
-                                        const formData = new FormData();
-                                        formData.append('file', file);
-                                        try {
-                                            const res = await messageService.uploadMedia(formData);
-                                            const type = file.type.startsWith('image/') ? 'image' : 
-                                                         file.type.startsWith('video/') ? 'video' : 
-                                                         file.type.startsWith('audio/') ? 'voice' : 'text';
-                                            
-                                            const payload = {
-                                                message: `Sent a ${type}`,
-                                                message_type: type,
-                                                file_url: res.data.file_url 
-                                            };
-                                            if (selectedUser.is_group) payload.group_id = selectedUser.id;
-                                            else payload.receiver_id = selectedUser.id;
-                                            
-                                            socketService.send('send_message', payload);
-                                        } catch (err) {
-                                            console.error('Upload failed', err);
-                                        }
-                                    }}
-                                />
-                            </label>
-                            
-                            {!selectedUser.is_group && !isMutual ? (
-                                <div className="flex-1 py-3 px-6 bg-amber-50 border border-amber-100 rounded-full flex items-center justify-center text-amber-700 text-xs font-medium animate-pulse">
-                                    Mutual follow required to send messages
-                                </div>
-                            ) : isRecording ? (
-                                <VoiceRecorder 
-                                    onCancel={() => setIsRecording(false)}
-                                    onRecordingComplete={async (file) => {
-                                        setIsRecording(false);
-                                        const formData = new FormData();
-                                        formData.append('file', file);
-                                        try {
-                                            const res = await messageService.uploadMedia(formData);
-                                            const payload = {
-                                                message: 'Sent a voice note',
-                                                message_type: 'voice',
-                                                file_url: res.data.file_url
-                                            };
-                                            if (selectedUser.is_group) payload.group_id = selectedUser.id;
-                                            else payload.receiver_id = selectedUser.id;
-                                            socketService.send('send_message', payload);
-                                        } catch (err) {
-                                            console.error('Voice upload failed', err);
-                                        }
-                                    }}
-                                />
-                            ) : (
-                                <form onSubmit={handleSendMessage} className="relative flex-1 flex items-center">
-                                    <input
-                                        type="text"
-                                        value={newMessage}
-                                        onChange={handleTyping}
-                                        placeholder="Type a message..."
-                                        className="w-full rounded-full bg-gray-100 px-5 py-3 text-sm outline-none focus:bg-gray-200 transition-colors"
-                                        disabled={wsStatus !== 'connected'}
-                                    />
-                                    <button 
-                                        type="button"
-                                        onClick={() => setIsRecording(true)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-emerald-500 text-lg"
-                                        title="Voice Note"
-                                    >🎙️</button>
-                                </form>
-                            )}
-                            
-                            <button 
-                                onClick={handleSendMessage}
-                                disabled={!newMessage.trim() || wsStatus !== 'connected'}
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-white shadow-md transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 flex-shrink-0"
-                            >
-                                ➤
-                            </button>
-                        </footer>
-                    </>
+                    <ChatWindow
+                        selectedUser={selectedUser}
+                        messages={messages}
+                        currentUserId={user.id}
+                        newMessage={newMessage}
+                        onMessageChange={handleTyping}
+                        onSendMessage={handleSendMessage}
+                        onStartRecording={() => setIsRecording(!isRecording)}
+                        isRecording={isRecording}
+                        wsStatus={wsStatus}
+                        onBack={() => setSelectedUser(null)}
+                        onOpenCall={() => {
+                            addCallLogEntry({ caller: selectedUser, direction: 'outgoing', status: 'calling', type: 'audio' });
+                            setActiveCall({ caller: selectedUser, isIncoming: false });
+                        }}
+                        isMutual={isMutual}
+                        typingUser={typingUser}
+                    />
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center bg-[#F8F9FA]">
-                        <div className="w-20 h-20 mb-4 rounded-full bg-emerald-100 flex items-center justify-center text-3xl">
-                            💬
+                    <div className="flex-1 flex flex-col items-center justify-center bg-slate-950">
+                        <div className="w-24 h-24 mb-6 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                            <span className="text-4xl">💬</span>
                         </div>
-                        <h2 className="text-xl font-bold text-gray-800 mb-2">SecureChat Web</h2>
-                        <p className="text-gray-500 text-sm max-w-xs text-center">Select a user to view your conversations and send messages securely.</p>
+                        <h2 className="text-2xl font-bold text-white mb-2 tracking-wide">SecureChat</h2>
+                        <p className="text-slate-400 max-w-sm text-center text-sm">Select a user to view your conversations and send messages securely.</p>
                     </div>
                 )}
             </main>
+
+            {/* Mobile Bottom Nav - Only visible on mobile when sidebar is active */}
+            {!selectedUser && (
+                <MobileNavbar
+                    onOpenSidebar={() => setSelectedUser(null)}
+                    onOpenStatus={() => setActiveStatuses(true)}
+                    onOpenSettings={() => setIsSettingsOpen(true)}
+                />
+            )}
 
             {isSettingsOpen && (
                 <SettingsModal 
@@ -528,35 +409,57 @@ const Chat = () => {
             )}
 
             {isCallHistoryOpen && (
-                <div className="fixed inset-0 z-[400] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-                    <div className="w-full max-w-3xl rounded-3xl bg-white shadow-2xl overflow-hidden border border-slate-200">
-                        <div className="flex items-center justify-between gap-3 p-4 border-b border-slate-200 bg-slate-50">
+                <div className="fixed inset-0 z-[400] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+                    <div className="w-full max-w-3xl rounded-[2rem] bg-slate-900 shadow-2xl overflow-hidden border border-slate-800">
+                        <div className="flex items-center justify-between gap-3 p-5 border-b border-slate-800 bg-slate-950/50">
                             <div>
-                                <h2 className="text-lg font-semibold text-slate-900">Call History</h2>
-                                <p className="text-sm text-slate-500">Recent incoming, outgoing, and missed calls</p>
+                                <h2 className="text-lg font-semibold text-white">Call History</h2>
+                                <p className="text-sm text-slate-400">Recent incoming, outgoing, and missed calls</p>
                             </div>
                             <button
                                 onClick={() => setIsCallHistoryOpen(false)}
-                                className="p-2 rounded-full text-slate-600 hover:bg-slate-200 transition-all"
-                                title="Close call history"
+                                className="p-2 rounded-full bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-white transition-all"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
-                        <div className="p-4 max-h-[75vh] overflow-y-auto">
+                        <div className="p-4 max-h-[70vh] overflow-y-auto">
                             <CallLog logs={callLog} />
                         </div>
                     </div>
                 </div>
             )}
+            
             {activeCall && (
                 <CallModal 
                     caller={activeCall.caller} 
                     isIncoming={activeCall.isIncoming} 
                     onEnd={() => setActiveCall(null)} 
                 />
+            )}
+
+            {activeStatuses === true && (
+                <div className="fixed inset-0 z-[300] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+                    <div className="w-full max-w-lg rounded-[2rem] bg-slate-900 shadow-2xl overflow-hidden border border-slate-800">
+                        <div className="flex justify-between items-center p-5 border-b border-slate-800">
+                            <h2 className="text-white text-lg font-semibold">Status Updates</h2>
+                            <button onClick={() => setActiveStatuses(null)} className="p-2 rounded-full bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div className="p-4 bg-slate-950">
+                            <StatusTray onSelectStatus={(statuses) => setActiveStatuses(statuses)} />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {Array.isArray(activeStatuses) && (
+                <StatusViewer statuses={activeStatuses} onClose={() => setActiveStatuses(null)} />
             )}
         </div>
     );
