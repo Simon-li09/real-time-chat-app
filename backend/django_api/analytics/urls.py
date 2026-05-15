@@ -1,8 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+from .views import AdminStats
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # This "api/" prefix matches your Axios baseURL
-    path('api/', include('your_app_name.urls')), 
+    # Full path: /api/analytics/admin/stats/
+    path('admin/stats/', AdminStats.as_view(), name='admin-stats'),
 ]

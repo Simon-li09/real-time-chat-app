@@ -60,14 +60,3 @@ class MeView(generics.RetrieveAPIView):
     
     def get_object(self):
         return self.request.user
-
-class AdminStats(APIView):
-    permission_classes = [permissions.IsAuthenticated] # Or IsAdminUser if you have that
-    
-    def get(self, request):
-        data = {
-            "total_users": User.objects.count(),
-            "active_now": 0, # Placeholder
-            "messages_sent": 0 # Placeholder
-        }
-        return Response(data)
