@@ -1,7 +1,19 @@
 import React from 'react';
 
 const MessageBubble = ({ message, isMe }) => {
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const audioRef = React.useRef(null);
   const time = message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   const renderContent = () => {
     if (message.message_type === 'voice') {
@@ -20,8 +32,11 @@ const MessageBubble = ({ message, isMe }) => {
             </div>
           )}
 
-          <button className="flex h-10 w-10 items-center justify-center text-2xl text-slate-600 transition hover:scale-110">
-            ▶️
+          <button 
+            onClick={togglePlay}
+            className="flex h-10 w-10 items-center justify-center text-2xl text-slate-600 transition hover:scale-110"
+          >
+            {isPlaying ? '⏸️' : '▶️'}
           </button>
 
           <div className="flex-1 flex flex-col gap-1">
@@ -30,7 +45,7 @@ const MessageBubble = ({ message, isMe }) => {
               {[30, 60, 40, 80, 50, 70, 40, 90, 60, 30, 50, 80, 40, 60, 30, 70, 50, 40].map((h, i) => (
                 <div 
                   key={i} 
-                  className={`w-[2px] rounded-full ${i < 5 ? 'bg-slate-500' : 'bg-slate-300'}`} 
+                  className={`w-[2px] rounded-full ${i < 8 && isPlaying ? 'bg-emerald-500' : 'bg-slate-300'}`} 
                   style={{ height: `${h}%` }} 
                 />
               ))}
@@ -51,7 +66,12 @@ const MessageBubble = ({ message, isMe }) => {
             </div>
           )}
           
-          <audio src={fullUrl} className="hidden" />
+          <audio 
+            ref={audioRef}
+            src={fullUrl} 
+            className="hidden" 
+            onEnded={() => setIsPlaying(false)}
+          />
         </div>
       );
     }
