@@ -81,12 +81,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send_error("Message content cannot be empty")
             return
 
-        # Messaging restriction checks
-        if receiver_id:
-            is_mutual = await self.is_mutual_following(self.user_id, receiver_id)
-            if not is_mutual:
-                await self.send_error("Messaging restricted: Both users must follow each other", code="RESTRICTED_MUTUAL")
-                return
+        # Saving and Broadcasting
+        if not receiver_id and not group_id:
+            await self.send_error("Missing recipient: specify receiver_id or group_id")
+            return
         elif group_id:
             members = await self.get_group_members(group_id)
             if int(self.user_id) not in members:
