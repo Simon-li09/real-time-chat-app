@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import MessageBubble from './MessageBubble';
+import VoiceRecorder from './VoiceRecorder';
 
 const ChatWindow = ({
   selectedUser,
@@ -9,6 +10,8 @@ const ChatWindow = ({
   onMessageChange,
   onSendMessage,
   onStartRecording,
+  onCancelRecording,
+  onRecordingComplete,
   isRecording,
   wsStatus,
   onBack,
@@ -85,9 +88,10 @@ const ChatWindow = ({
           ) : null}
 
           {isRecording ? (
-            <div className="rounded-3xl border border-slate-700 bg-slate-900/80 px-4 py-4 text-sm text-slate-200">
-              Recording voice note... Tap the mic again to stop.
-            </div>
+            <VoiceRecorder 
+              onCancel={onCancelRecording} 
+              onRecordingComplete={onRecordingComplete} 
+            />
           ) : (
             <div className="flex items-center gap-3 rounded-3xl border border-slate-800 bg-slate-900/90 px-3 py-3 shadow-lg shadow-slate-950/20">
               <button

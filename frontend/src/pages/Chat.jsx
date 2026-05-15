@@ -236,6 +236,15 @@ const Chat = () => {
         }
     };
 
+    const handleFollowClick = async (userId) => {
+        try {
+            await userService.followUser(userId);
+            fetchUsers();
+        } catch (err) {
+            console.error('Failed to follow user', err);
+        }
+    };
+
     const loadGroups = async () => {
         try {
             const response = await groupService.fetchGroups();
@@ -292,13 +301,13 @@ const Chat = () => {
         }
     };
 
-    const handleTyping = (e) => {
-        const value = e.target.value;
-        setNewMessage(value);
+    const handleTyping = (value) => {
+        const textValue = typeof value === 'string' ? value : value?.target?.value || '';
+        setNewMessage(textValue);
         if (selectedUser && isChatConnected) {
             socketService.send('typing', {
                 receiver_id: selectedUser.id,
-                is_typing: value.length > 0
+                is_typing: textValue.length > 0
             });
         }
     };
@@ -356,6 +365,7 @@ const Chat = () => {
                     onOpenStatus={() => setActiveStatuses(true)} // Or handle specific status modal
                     onOpenSettings={() => setIsSettingsOpen(true)}
                     onOpenCallHistory={() => setIsCallHistoryOpen(true)}
+                    onFollowClick={handleFollowClick}
                 />
             </div>
 
@@ -369,7 +379,26 @@ const Chat = () => {
                         newMessage={newMessage}
                         onMessageChange={handleTyping}
                         onSendMessage={handleSendMessage}
-                        onStartRecording={() => setIsRecording(!isRecording)}
+                        onStartRecording={() => setIsRecording(true)}
+                        onCancelRecording={() => setIsRecording(false)}
+                        onRecordingComplete={async (file) => {
+                            setIsRecording(false);
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            try {
+                                const res = await messageService.uploadMedia(formData);
+                                const payload = {
+                                    message: 'Sent a voice note',
+                                    message_type: 'voice',
+                                    file_url: res.data.file_url
+                                };
+                                if (selectedUser.is_group) payload.group_id = selectedUser.id;
+                                else payload.receiver_id = selectedUser.id;
+                                socketService.send('send_message', payload);
+                            } catch (err) {
+                                console.error('Voice upload failed', err);
+                            }
+                        }}
                         isRecording={isRecording}
                         wsStatus={wsStatus}
                         onBack={() => setSelectedUser(null)}

@@ -12,6 +12,7 @@ const ChatSidebar = ({
   onOpenStatus,
   onOpenSettings,
   onOpenCallHistory,
+  onFollowClick,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -132,7 +133,36 @@ const ChatSidebar = ({
                             <h3 className="truncate text-sm font-semibold text-slate-900">{name}</h3>
                             {time && <span className="text-[11px] text-slate-400">{time}</span>}
                           </div>
-                          <p className="mt-1 truncate text-sm text-slate-500">{lastMessage}</p>
+                          
+                          {chat.is_followed_by && !chat.is_following && !chat.is_group ? (
+                            <div className="mt-1 flex items-center justify-between gap-2">
+                              <p className="truncate text-sm text-emerald-600">{name} followed you</p>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onFollowClick && onFollowClick(chat.id);
+                                }}
+                                className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-emerald-700 shadow-sm"
+                              >
+                                Follow back
+                              </button>
+                            </div>
+                          ) : !chat.is_followed_by && !chat.is_following && !chat.is_group ? (
+                            <div className="mt-1 flex items-center justify-between gap-2">
+                              <p className="truncate text-sm text-slate-500">{lastMessage}</p>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onFollowClick && onFollowClick(chat.id);
+                                }}
+                                className="rounded-full bg-emerald-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white transition hover:bg-emerald-700 shadow-sm"
+                              >
+                                Follow
+                              </button>
+                            </div>
+                          ) : (
+                            <p className="mt-1 truncate text-sm text-slate-500">{lastMessage}</p>
+                          )}
                           <div className="mt-3 flex items-center justify-between gap-3">
                             <span className="text-[11px] uppercase tracking-[0.2em] text-slate-400">{chat.is_group ? 'Group' : 'Direct'}</span>
                             {unread > 0 && (

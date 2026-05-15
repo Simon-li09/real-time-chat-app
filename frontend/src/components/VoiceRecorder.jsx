@@ -60,15 +60,15 @@ const VoiceRecorder = ({ onRecordingComplete, onCancel }) => {
     }, []);
 
     return (
-        <div className="flex items-center bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100 flex-1 animate-in slide-in-from-right-4 duration-300">
+        <div className="flex items-center bg-slate-900/90 px-4 py-3 rounded-3xl border border-slate-800 flex-1 shadow-lg shadow-slate-950/20 animate-in slide-in-from-right-4 duration-300">
             <div className="flex items-center space-x-3 w-full">
                 {/* Pulsing indicator */}
                 <div className="relative flex items-center justify-center w-3 h-3">
                     <div className="absolute w-full h-full rounded-full bg-red-500 animate-ping opacity-75"></div>
-                    <div className="relative w-2 h-2 rounded-full bg-red-600"></div>
+                    <div className="relative w-2 h-2 rounded-full bg-red-500"></div>
                 </div>
                 
-                <span className="text-sm font-bold text-emerald-700 font-mono tracking-tighter">
+                <span className="text-sm font-bold text-slate-200 font-mono tracking-tighter">
                     Recording: {formatTime(recordingTime)}
                 </span>
                 
@@ -78,7 +78,7 @@ const VoiceRecorder = ({ onRecordingComplete, onCancel }) => {
                         {[4, 8, 12, 6, 10, 14, 5, 9].map((h, i) => (
                             <div 
                                 key={i} 
-                                className="w-1 bg-emerald-400 rounded-full animate-bounce" 
+                                className="w-1 bg-emerald-500 rounded-full animate-bounce" 
                                 style={{ height: `${h}px`, animationDelay: `${i * 0.1}s` }}
                             ></div>
                         ))}
@@ -99,12 +99,10 @@ const VoiceRecorder = ({ onRecordingComplete, onCancel }) => {
                     <button 
                         type="button"
                         onClick={stopRecording}
-                        className="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-full shadow-md shadow-emerald-200 transition-all active:scale-90"
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500 text-white transition hover:bg-emerald-400 active:scale-90"
                         title="Finish and Send"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                            <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-                        </svg>
+                        ➤
                     </button>
                 </div>
             </div>

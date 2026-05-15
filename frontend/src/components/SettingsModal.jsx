@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { userService } from '../services/api';
+import { authService } from '../services/api';
 
 const SettingsModal = ({ user, onClose, onUpdate }) => {
     const [username, setUsername] = useState(user.username);
@@ -30,7 +30,7 @@ const SettingsModal = ({ user, onClose, onUpdate }) => {
         }
 
         try {
-            const response = await userService.updateProfile(formData);
+            const response = await authService.updateProfile(formData);
             // Update local storage and state
             const updatedUser = { ...user, ...response.data };
             localStorage.setItem('user', JSON.stringify(updatedUser));
