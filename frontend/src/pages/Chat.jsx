@@ -192,7 +192,7 @@ const Chat = () => {
                 if (data.signal.type === 'offer' && !activeCallRef.current) {
                     playSound('call');
                     const caller = users.find(u => u.id == data.from) || { id: data.from, username: `User ${data.from}` };
-                    setActiveCall({ caller, isIncoming: true });
+                    setActiveCall({ caller, isIncoming: true, pendingSignal: data });
                     addCallLogEntry({
                         caller,
                         direction: 'incoming',
@@ -418,6 +418,7 @@ const Chat = () => {
                     caller={activeCall.caller} 
                     isIncoming={activeCall.isIncoming} 
                     onEnd={() => setActiveCall(null)} 
+                    pendingSignal={activeCall.pendingSignal}
                 />
             )}
 

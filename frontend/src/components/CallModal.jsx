@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import socketService from '../sockets/socket';
 
-const CallModal = ({ caller, isIncoming, onEnd }) => {
+const CallModal = ({ caller, isIncoming, onEnd, pendingSignal }) => {
     const [status, setStatus] = useState(isIncoming ? 'incoming' : 'calling');
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
@@ -96,6 +96,19 @@ const CallModal = ({ caller, isIncoming, onEnd }) => {
                         cleanup();
                     }
                 });
+
+                // Process pending offer (arrived before CallModal mounted)
+                if (pendingSignal && isIncoming && String(pendingSignal.from) === String(caller.id)) {
+                    const { type, offer } = pendingSignal.signal;
+                    if (type === 'offer' && pcRef.current && pcRef.current.signalingState !== 'closed') {
+                        await pcRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+                        setStatus('ringing');
+                        while (candidateQueue.current.length > 0) {
+                            const cand = candidateQueue.current.shift();
+                            await pcRef.current.addIceCandidate(new RTCIceCandidate(cand));
+                        }
+                    }
+                }
 
                 return () => {
                     unsubSignal();
