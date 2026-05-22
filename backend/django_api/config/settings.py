@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'xa_n1X1DPwksFzeQwmHn7bf_wx1_59WFBdH0gZZD5h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'real-time-back.onrender.com').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'real-time-back.onrender.com,localhost,127.0.0.1').split(',')
 
 JWT_SECRET = os.getenv('JWT_SECRET', 'EuIJWiPX9sHuW8LZIoJAMPe--aiVib6fC6Zx8-0TMWJhO_KYKZyykogK2c5XneUf1wU')
 

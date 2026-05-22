@@ -17,7 +17,7 @@ function Login() {
         setIsError(false);
         
         try {
-            const res = await API.post("/auth/login/", { 
+            const res = await API.post("auth/login/", { 
                 username: username.trim(), 
                 password: password.trim() 
             });

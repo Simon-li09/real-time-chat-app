@@ -278,7 +278,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender_payload = {
                 'id': int(sender_id),
                 'username': sender.username,
-                'profile_picture': getattr(sender, 'profile_picture', None),
+                'profile_picture': sender.profile_picture.url if sender.profile_picture and hasattr(sender.profile_picture, 'url') else None,
                 'name': getattr(sender, 'name', None),
             }
 
